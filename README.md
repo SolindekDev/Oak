@@ -71,10 +71,6 @@ let name: string = "Bruno"
 let pi: float = 3.14159
 let dynamic_var: dyn = "Dynamic changes" // String
 ```
-### Built in functions
-### If & else 
-### While loops
-### For loops
 ### Function declaration & calls and parameters
 To declare function in Oak you need to use this grammar:
 ```rs 
@@ -97,6 +93,10 @@ fn main() {
   println("{}", get_age_of_alex())
 }
 ```
+### Built in functions
+### If & else 
+### While loops
+### For loops
 ### Array
 ### Classes & class methods
 ### Object
