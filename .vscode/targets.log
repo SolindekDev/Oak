@@ -5,8 +5,9 @@ make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --quest
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
+ 
 
-# Make data base, printed on Sun Jul 31 11:49:03 2022
+# Make data base, printed on Sun Jul 31 18:13:55 2022
 
 # Variables
 
@@ -27,7 +28,8 @@ VBOX_MSI_INSTALL_PATH = C:\Program Files\Oracle\VirtualBox\
 # environment
 LOCALAPPDATA = C:\Users\User\AppData\Local
 # environment
-VSCODE_CWD = C:\Users\User\AppData\Local\Programs\Microsoft VS Code
+VSCODE_CWD = C 
+:\Users\User\AppData\Local\Programs\Microsoft VS Code
 # environment
 CHOCOLATEYINSTALL = C:\ProgramData\chocolatey
 # environment
@@ -45,7 +47,7 @@ GOPATH = C:\Users\User\go
 # environment
 LUA_DEV = C:\Program Files (x86)\Lua\5.1
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_3416_LVCDOTHLNMOHQYYJ
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_13572_DRMJQIJSGAPGDDGI
 # environment
 VS160COMCOMNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
 # environment
@@ -81,7 +83,7 @@ ONEDRIVE = C:\Users\User\OneDrive
 # environment
 POWERSHELL_DISTRIBUTION_CHANNEL = MSI:Windows 10 Home
 # makefile
-CURDIR := c:/Users/User/Documents/Programming/Cpp/Oak
+CURDIR := c:/Users/User/Documents/Programming/C/Oak/Oak
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # automatic
@@ -103,7 +105,7 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 3416
+VSCODE_PID = 13572
 # environment
 CLION = C:\Program Files\JetBrains\CLion 2021.3.3\bin;
 # automatic
@@ -243,10 +245,10 @@ CC_FLAGS = -O3 -std=c++17 -I./include
 
 # Directories
 
-# . (key c:/Users/User/Documents/Programming/Cpp/Oak, mtime 1659211284): 9 files, no impossibilities.
-# ./Source (key c:/Users/User/Documents/Programming/Cpp/Oak/Source, mtime 1659211269): 3 files, no impossibilities.
+# . (key c:/Users/User/Documents/Programming/C/Oak/Oak, mtime 1659272208): 13 files, no impossibilities.
+# ./Source (key c:/Users/User/Documents/Programming/C/Oak/Oak/Source, mtime 1659272208): 8 files, no impossibilities.
 
-# 12 files, no impossibilities in 2 directories.
+# 21 files, no impossibilities in 2 directories.
 
 # Implicit Rules
 
@@ -254,7 +256,14 @@ CC_FLAGS = -O3 -std=c++17 -I./include
 
 # Files
 
-compile: Source/main.cpp
+# Not a target:
+Source/Error.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-31 14:38:46
+#  File has been updated.
+#  Successfully updated.
+
+compile: Source/Args.cpp Source/Error.cpp Source/File.cpp Source/Lexer.cpp Source/Main.cpp Source/Token.cpp
 #  Implicit rule search has not been done.
 #  Implicit/static pattern stem: ''
 #  File does not exist.
@@ -265,15 +274,15 @@ compile: Source/main.cpp
 # automatic
 # * := 
 # automatic
-# < := Source/main.cpp
+# < := Source/Args.cpp
 # automatic
-# + := Source/main.cpp
+# + := Source/Args.cpp Source/Error.cpp Source/File.cpp Source/Lexer.cpp Source/Main.cpp Source/Token.cpp
 # automatic
 # % := 
 # automatic
-# ^ := Source/main.cpp
+# ^ := Source/Args.cpp Source/Error.cpp Source/File.cpp Source/Lexer.cpp Source/Main.cpp Source/Token.cpp
 # automatic
-# ? := Source/main.cpp
+# ? := Source/Args.cpp Source/Error.cpp Source/File.cpp Source/Lexer.cpp Source/Main.cpp Source/Token.cpp
 # automatic
 # | := 
 # variable set hash-table stats:
@@ -289,9 +298,16 @@ Makefile:
 #  Successfully updated.
 
 # Not a target:
-Source/main.cpp:
+Source/Token.cpp:
 #  Implicit rule search has been done.
-#  Last modified 2022-07-30 21:07:52
+#  Last modified 2022-07-31 15:46:01
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+Source/Lexer.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-31 16:16:46
 #  File has been updated.
 #  Successfully updated.
 
@@ -311,25 +327,46 @@ all: compile
 # Load=0/32=0%, Rehash=0, Collisions=0/6=0%
 
 # Not a target:
+Source/File.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-31 13:10:57
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+Source/Main.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-31 16:08:10
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
 .SUFFIXES:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
+# Not a target:
+Source/Args.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-31 13:07:26
+#  File has been updated.
+#  Successfully updated.
+
 # files hash-table stats:
-# Load=6/1024=1%, Rehash=0, Collisions=0/21=0%
+# Load=11/1024=1%, Rehash=0, Collisions=0/31=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 16 / storage = 124 B / avg = 7 B
-# current buf: size = 8174 B / used = 124 B / count = 16 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 30 / storage = 294 B / avg = 9 B
+# current buf: size = 8174 B / used = 294 B / count = 30 / avg = 9 B
 
-# strcache performance: lookups = 27 / hit rate = 40%
+# strcache performance: lookups = 41 / hit rate = 26%
 # hash-table stats:
-# Load=16/8192=0%, Rehash=0, Collisions=0/27=0%
-# Finished Make data base on Sun Jul 31 11:49:03 2022
+# Load=30/8192=0%, Rehash=0, Collisions=0/41=0%
+# Finished Make data base on Sun Jul 31 18:13:55 2022
 
  

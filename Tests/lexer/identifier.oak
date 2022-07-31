@@ -1,0 +1,13 @@
+identifier next_identifier
+identifier_lol
+/* 
+
+Returns:
+
+identifier:Identifier
+next_identifier:Identifier
+:Newline
+identifier_lol:Identifier
+:EOF
+
+*/

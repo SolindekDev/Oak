@@ -1,5 +1,5 @@
 /*
-    Oak programming langauge
+    Oak programming language
 
     Copyright (C) 2022 SolindekDev <ytsolindekttv@gmail.com>
 */
@@ -8,6 +8,7 @@
 #include <Args.h>
 #include <File.h>
 #include <Error.h>
+#include <Token.h>
 #include <Lexer.h>
 #include <Libs.h>
 
@@ -103,7 +104,8 @@ int main(int argc, char **argv) {
             std::string value = File::read_file(filename.filename);
         
             if (file_exists == true) {
-
+                auto lexer = new OakLexer::Lexer(value, filename.filename);
+                lexer->start();
             } else 
                 Error::print_error_with_exit(FILE_ERROR, "File that you provided do not exists");
         }

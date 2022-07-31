@@ -1,0 +1,8 @@
+fn get_age(int32 age) {
+    println("{}", age)
+}
+
+fn main() {
+    let age: int16 = 16
+    get_age(age as int32) # Type cast int16 to int32
+}
