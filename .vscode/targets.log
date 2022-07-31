@@ -1,0 +1,335 @@
+make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 4.3
+# Built for Windows32
+# Copyright (C) 1988-2020 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Sun Jul 31 11:49:03 2022
+
+# Variables
+
+# environment
+FPS_BROWSER_APP_PROFILE_STRING = Internet Explorer
+# environment
+SYSTEMDRIVE = C:
+# makefile (from 'Makefile', line 5)
+OUTPUT = Build/oak.exe
+# environment
+LC_ALL = C
+# environment
+_MSYS2_BASH = C:\tools\msys64\usr\bin\bash.exe
+# environment
+USERPROFILE = C:\Users\User
+# environment
+VBOX_MSI_INSTALL_PATH = C:\Program Files\Oracle\VirtualBox\
+# environment
+LOCALAPPDATA = C:\Users\User\AppData\Local
+# environment
+VSCODE_CWD = C:\Users\User\AppData\Local\Programs\Microsoft VS Code
+# environment
+CHOCOLATEYINSTALL = C:\ProgramData\chocolatey
+# environment
+SYSTEMROOT = C:\WINDOWS
+# environment
+PROCESSOR_LEVEL = 6
+# environment
+PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;C:\Program Files\Intel\Wired Networking\
+# default
+MAKE_COMMAND := C:/ProgramData/chocolatey/lib/make/tools/install/bin/make.exe
+# environment
+GOPATH = C:\Users\User\go
+# automatic
+@D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
+# environment
+LUA_DEV = C:\Program Files (x86)\Lua\5.1
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_3416_LVCDOTHLNMOHQYYJ
+# environment
+VS160COMCOMNTOOLS = C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\
+# environment
+FPS_BROWSER_USER_PROFILE_STRING = Default
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+.VARIABLES := 
+# automatic
+%D = $(patsubst %/,%,$(patsubst %\,%,$(dir $%)))
+# automatic
+^D = $(patsubst %/,%,$(patsubst %\,%,$(dir $^)))
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\User\AppData\Roaming\Code\CachedData\3b889b090b5ad5793f524b5d1d39fda662b96a2a
+# environment
+LANG = C
+# default
+.LOADED := 
+# environment
+TMP = C:\Users\User\AppData\Local\Temp
+# default
+.INCLUDE_DIRS = .
+# environment
+PROCESSOR_ARCHITEW6432 = AMD64
+# makefile
+MAKEFLAGS = pqrR
+# environment
+INTEL_DEV_REDIST = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+# environment
+ONEDRIVE = C:\Users\User\OneDrive
+# environment
+POWERSHELL_DISTRIBUTION_CHANNEL = MSI:Windows 10 Home
+# makefile
+CURDIR := c:/Users/User/Documents/Programming/Cpp/Oak
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# automatic
+*D = $(patsubst %/,%,$(patsubst %\,%,$(dir $*)))
+# environment
+PROGRAMFILES = C:\Program Files (x86)
+# environment
+MFLAGS = -pqrR
+# default
+.SHELLFLAGS := -c
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# automatic
++D = $(patsubst %/,%,$(patsubst %\,%,$(dir $+)))
+# environment
+HULDOG = C:\Users\User\Documents\Node.JS\Huldog/shell.js
+# makefile (from 'Makefile', line 1)
+MAKEFILE_LIST := Makefile
+# automatic
+@F = $(notdir $@)
+# environment
+VSCODE_PID = 3416
+# environment
+CLION = C:\Program Files\JetBrains\CLion 2021.3.3\bin;
+# automatic
+?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
+# automatic
+*F = $(notdir $*)
+# environment
+LUA_PATH = ;;C:\Program Files (x86)\Lua\5.1\lua\?.luac
+# automatic
+<D = $(patsubst %/,%,$(patsubst %\,%,$(dir $<)))
+# environment
+VSCODE_NLS_CONFIG = {"locale":"pl","availableLanguages":{},"_languagePackSupport":true}
+# environment
+ONEDRIVECONSUMER = C:\Users\User\OneDrive
+# default
+MAKE_HOST := Windows32
+# environment
+PROGRAMDATA = C:\ProgramData
+# default
+SHELL := sh.exe
+# environment
+HOMEPATH = \Users\User
+# default
+MAKECMDGOALS := all
+# environment
+RUBYOPT = -Eutf-8
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+COMSPEC = C:\WINDOWS\system32\cmd.exe
+# environment
+WEBSTORM = C:\Program Files\JetBrains\WebStorm 2021.1.1\bin;
+# environment
+WINDIR = C:\WINDOWS
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+PATH = C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\iCLS\;C:\Program Files\Intel\Intel(R) Management Engine Components\iCLS\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\dotnet\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Users\User\AppData\Local\Programs\Python\Python39\Scripts;C:\Program Files\Go\bin;C:\TDM-GCC-64\bin;C:\Users\User\AppData\Local\bin\NASM;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\PuTTY\;C:\ProgramData\chocolatey\bin;C:\Program Files\PowerShell\7\;C:\Program Files\qemu;C:\Users\User\Documents\exe;C:\Neovim\bin;C:\Program Files (x86)\GTK2-Runtime\bin;C:\Users\User\Documents\x86_64-elf-tools-windows\bin;C:\Program Files\nodejs\;C:\Program Files\Firefox Developer Edition;C:\Users\User\Documents\ffmpeg-n5.0-latest-win64-lgpl-5.0\bin;C:\Users\User\Documents\zig-windows-x86_64-0.10.0-dev.352+c9ae24503\zig-windows-x86_64-0.10.0-dev.352+c9ae24503;C:\Program Files\CMake\bin;C:\Users\User\Downloads\SDL2-2.0.20-win32-x64;C:\Users\User\Downloads\fasmw17329;C:\Users\User\Documents\v;C:\Program Files (x86)\Lua\5.1;C:\Program Files (x86)\Lua\5.1\clibs;C:\Program Files\erl-24.1.7\bin;C:\Program Files (x86)\Elixir\bin;C:\WINDOWS\system32\config\systemprofile\.mix\escripts;C:\Program Files\erl-24.1.7\bin;C:\Program Files\LLVM\bin;C:\Ruby27-x64\bin;C:\Users\User\.cargo\bin;C:\Users\User\AppData\Local\Microsoft\WindowsApps;C:\Users\User\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\User\.dotnet\tools;C:\Users\User\AppData\Local\GitHubDesktop\bin;C:\Users\User\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\WebStorm 2021.1.1\bin;C:\Users\User\go\bin;C:\Users\User\AppData\Local\bin\NASM;C:\tools\dart-sdk\bin;C:\Users\User\AppData\Roaming\Pub\Cache\bin;C:\Users\User\.dotnet\tools;C:\tools\flutter\bin;C:\Users\User\AppData\Roaming\cabal\bin;C:\tools\ghc-9.2.1\bin;C:\tools\msys64;C:\Users\User\Documents\x86_64-elf-tools-windows\bin;C:\Users\User\AppData\Roaming\npm;C:\Program Files\Firefox Developer Edition;C:\Users\User\Documents\ffmpeg-n5.0-latest-win64-lgpl-5.0\bin;C:\Users\User\Documents\zig-windows-x86_64-0.10.0-dev.352+c9ae24503\zig-windows-x86_64-0.10.0-dev.352+c9ae24503;C:\Program Files\CMake\bin;C:\Users\User\Downloads\SDL2-2.0.20-win32-x64;C:\Users\User\Downloads\fasmw17329;C:\Program Files\JetBrains\CLion 20;C:\Program Files\erl-24.1.7\bin;C:\Users\User\.dotnet\tools
+# environment
+COMPUTERNAME = DESKTOP-QT0SBD4
+# default
+MAKEFILES := 
+# automatic
+^F = $(notdir $^)
+# environment
+_MSYS2_PREFIX = x86_64
+# environment
+PROMPT = $P$G
+# environment
+CHOCOLATEYLASTPATHUPDATE = 132825894815092162
+# environment
+LOGONSERVER = \\DESKTOP-QT0SBD4
+# environment
+USERNAME = Solindek
+# environment
+COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
+# automatic
+?F = $(notdir $?)
+# environment
+PROGRAMW6432 = C:\Program Files
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.wlua;.lexe;.RB;.RBW
+# automatic
++F = $(notdir $+)
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+USERDOMAIN = DESKTOP-QT0SBD4
+# 'override' directive
+GNUMAKEFLAGS := 
+# environment
+OS = Windows_NT
+# makefile
+.DEFAULT_GOAL := all
+# environment
+QEMU = C:\Program Files\qemu
+# environment
+NASM = C:\Users\User\AppData\Local\bin\NASM
+# default
+MAKE_VERSION := 4.3
+# environment
+PROGRAMFILES(X86) = C:\Program Files (x86)
+# environment
+USERDOMAIN_ROAMINGPROFILE = DESKTOP-QT0SBD4
+# environment
+NUMBER_OF_PROCESSORS = 6
+# environment
+PUBLIC = C:\Users\Public
+# environment
+APPDATA = C:\Users\User\AppData\Roaming
+# environment
+HOMEDRIVE = C:
+# environment
+PROCESSOR_ARCHITECTURE = x86
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+TEMP = C:\Users\User\AppData\Local\Temp
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\ddf78b73f802b4b105ac4da8ec09dfcf-1.69.2-main-sock
+# default
+.RECIPEPREFIX := 
+# automatic
+<F = $(notdir $<)
+# default
+SUFFIXES := 
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# environment
+SESSIONNAME = Console
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync load
+# environment
+MIC_LD_LIBRARY_PATH = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\compiler\lib\mic
+# environment
+PROCESSOR_REVISION = 9e0a
+# makefile (from 'Makefile', line 1)
+CC = clang++
+# environment
+CHOCOLATEYTOOLSLOCATION = C:\tools
+# environment
+PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
+# makefile (from 'Makefile', line 2)
+CC_FLAGS = -O3 -std=c++17 -I./include
+# variable set hash-table stats:
+# Load=112/1024=11%, Rehash=0, Collisions=11/146=8%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (key c:/Users/User/Documents/Programming/Cpp/Oak, mtime 1659211284): 9 files, no impossibilities.
+# ./Source (key c:/Users/User/Documents/Programming/Cpp/Oak/Source, mtime 1659211269): 3 files, no impossibilities.
+
+# 12 files, no impossibilities in 2 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+compile: Source/main.cpp
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: ''
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := compile
+# automatic
+# * := 
+# automatic
+# < := Source/main.cpp
+# automatic
+# + := Source/main.cpp
+# automatic
+# % := 
+# automatic
+# ^ := Source/main.cpp
+# automatic
+# ? := Source/main.cpp
+# automatic
+# | := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=7/15=47%
+#  recipe to execute (from 'Makefile', line 13):
+	$(CC) $(CC_FLAGS) $? -o $(OUTPUT)
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-31 11:24:11
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+Source/main.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2022-07-30 21:07:52
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+all: compile
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=6/1024=1%, Rehash=0, Collisions=0/21=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 16 / storage = 124 B / avg = 7 B
+# current buf: size = 8174 B / used = 124 B / count = 16 / avg = 7 B
+
+# strcache performance: lookups = 27 / hit rate = 40%
+# hash-table stats:
+# Load=16/8192=0%, Rehash=0, Collisions=0/27=0%
+# Finished Make data base on Sun Jul 31 11:49:03 2022
+
+ 
