@@ -35,43 +35,43 @@ enum TokenKind {
     // =
     Assignment,
     // \0
-    Eof, 
+    Eof,
     // +=
-    AddAssignment, 
+    AddAssignment,
     // -=
-    SubtractAssignment, 
+    SubtractAssignment,
     // *=
-    MultiplyAssignment, 
+    MultiplyAssignment,
     // /=
     DivideAssignment,
     // ++
-    Increment, 
+    Increment,
     // --
-    Decrement, 
+    Decrement,
     // %
     Modulus,
     // <
     BiggerThan,
     // >
     LessThan,
-    // == 
+    // ==
     Equals,
     // !=
-    NotEquals, 
+    NotEquals,
     // <=
-    BiggerThanOrEquals, 
+    BiggerThanOrEquals,
     // >=
-    LessThanOrEquals, 
+    LessThanOrEquals,
     // ||
-    Or, 
-    // &&
+    Or,
+    // &
     And,
     // !
     Bang,
     // [
     LeftBracketRectangle,
     // ]
-    RightBracketRectangle, 
+    RightBracketRectangle,
     // {
     LeftCurlyBrackets,
     // }
@@ -90,8 +90,8 @@ TokenPos create_pos(int row, int col);
 class Token {
 public:
     std::string value;
-    std::string filename; 
-    TokenKind type; 
+    std::string filename;
+    TokenKind type;
     TokenPos pos;
 
     Token(std::string t_value, std::string t_filename, TokenKind t_type, TokenPos t_pos)

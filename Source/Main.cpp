@@ -4,6 +4,7 @@
     Copyright (C) 2022 SolindekDev <ytsolindekttv@gmail.com>
 */
 
+// Include important headers
 #include <Main.h>
 #include <Args.h>
 #include <File.h>
@@ -12,12 +13,14 @@
 #include <Lexer.h>
 #include <Libs.h>
 
+// Usage, this function print out usage of oak compiler
 void usage() {
     std::cout << "Usage: oak [--version] [--help] [options] [filename.oak]" << std::endl;
     exit(EXIT_SUCCESS);
 }
 
-std::string architecture() { 
+// Detect architecture of actual machine
+std::string architecture() {
     #if defined(__x86_64__) || defined(_M_X64)
         return "x86_64";
     #elif defined(i386) || defined(__i386__) || defined(__i386) || defined(_M_IX86)
@@ -59,19 +62,25 @@ std::string architecture() {
     #elif defined(__m68k__)
         return "M68K";
     #else
-        return "UNKNOWN";
+        return "UNKNOWN"; // yo man you are using calculator?
     #endif
 }
 
+// Version of oak compiler, version in std::string is saved
+// in OAK_VERSION property in header #include <Libs.h>.
+// To get version of compiler you need to write --version
+// --v flag.
 void version() {
-    std::cout << "oak (" 
-              << architecture() 
-              << ") " 
-              << OAK_VERSION 
+    std::cout << "oak ("
+              << architecture()
+              << ") "
+              << OAK_VERSION
               << std::endl;
     exit(EXIT_SUCCESS);
 }
 
+// Help of oak compiler you can get it by --help or --h
+// flag
 void help() {
     std::cout << "Help:\n"
               << "  Flags:\n"
@@ -85,12 +94,19 @@ void help() {
               << std::endl;
 }
 
+// Main entry of compiler.
 int main(int argc, char **argv) {
+    // If there's less than 2 argv
     if (argc < 2)
         usage();
     else {
-        Args::Parser parser = Args::Parser(argc, argv);
-        Args::Filename filename = parser.get_filename();
+        Args::Parser parser = Args::Parser(argc, argv);  // Argument parser from <Args.h> header file.
+        Args::Filename filename = parser.get_filename(); // Get filename from arguments if there's no filename in arguments then filename.exists is false.
+
+        auto source_only_flag   = parser.is_flag("--s") || parser.is_flag("--source-only");    // Is source-only flag enabled
+        auto show_code_gen_flag = parser.is_flag("--sc") || parser.is_flag("--show-code-gen"); // Is show-code-gen flag enabled
+        auto build_flag         = parser.is_flag("--b") || parser.is_flag("--build");          // Is build flag enabled
+        auto build_and_run_flag = parser.is_flag("--br") || parser.is_flag("--build-and-run"); // Is build-and-run flag enabled
 
         if (parser.is_flag("--version") || parser.is_flag("--v"))
             version();
@@ -98,16 +114,19 @@ int main(int argc, char **argv) {
             help();
         else if (parser.is_flag("--u") || parser.is_flag("--usage"))
             usage();
-
+          
+        // Filename exists!!!
         if (filename.exists == true) {
-            bool file_exists = File::file_exists(filename.filename);
-            std::string value = File::read_file(filename.filename);
-        
+            bool file_exists = File::file_exists(filename.filename); // First chceck is file existing.
+            std::string value = File::read_file(filename.filename); // Read value from file by File namespace.
+
+            // If file exists then start compiling proccess
             if (file_exists == true) {
+                // Create lexer class
                 auto lexer = new OakLexer::Lexer(value, filename.filename);
                 lexer->start();
-            } else 
-                Error::print_error_with_exit(FILE_ERROR, "File that you provided do not exists");
+            } else
+                Error::print_error_with_exit(FILE_ERROR, "File that you provided do not exists"); // The file do not exists.
         }
     }
 }

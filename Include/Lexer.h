@@ -18,6 +18,7 @@ public:
     std::string value;
     std::string filename;
     std::vector<Token> tokens;
+    TokenKind detection;
     Token* last_token;
     int curr_row { 0 };
     int curr_col { 0 };
@@ -27,6 +28,9 @@ public:
     bool space { false };
     bool comment_opened_inline { false };
     bool comment_opened_multi { false };
+    bool bracket_rectangle_opened { false };
+    bool bracket_curly_opened { false };
+    bool paren_opened { false };
     bool string_opened { false };
     bool is_error_message { false };
 
@@ -59,6 +63,8 @@ public:
     void print_all_tokens(std::vector<Token> &tokens);
 
     void is_string_ends();
+
+    void is_brackets_ends();
 
     void do_next_char();
 

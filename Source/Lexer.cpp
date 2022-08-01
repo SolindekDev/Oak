@@ -53,7 +53,7 @@ void Lexer::comment_multiline(std::vector<Token> &tokens) {
 }
 
 void Lexer::string_creator(std::vector<Token> &tokens) {
-    if (this->string_opened == true) 
+    if (this->string_opened == true)
         this->string_opened = false;
     else {
         tokens.push_back(
@@ -74,8 +74,10 @@ TokenKind Lexer::detect_char(char next_char) {
         case '\n':
             return TokenKind::Newline; // \n
         case '(':
+            this->paren_opened = true;
             return TokenKind::Lparen; // (
         case ')':
+            this->paren_opened = false;
             return TokenKind::Rparen; // )
         case '+':
             if (next_char != (char)6019 && next_char == '=') { // +=
@@ -111,6 +113,11 @@ TokenKind Lexer::detect_char(char next_char) {
             }
             return TokenKind::BiggerThan; // >
         case '<':
+            if (next_char != (char)6019 && next_char == '=') { // >=
+                this->index++;
+                this->do_next_char();
+                return TokenKind::LessThanOrEquals;
+            }
             return TokenKind::LessThan; // <
         case '*':
             if (next_char != (char)6019 && next_char == '=') { // *=
@@ -128,7 +135,6 @@ TokenKind Lexer::detect_char(char next_char) {
             return TokenKind::Divide; // /
         case '=':
             if (next_char != (char)6019 && next_char == '=') { // ==
-                std::cout << "creating equals token" << std::endl;
                 this->index++;
                 this->do_next_char();
                 return TokenKind::Equals;
@@ -146,12 +152,16 @@ TokenKind Lexer::detect_char(char next_char) {
         case '&':
             return TokenKind::And;
         case '[':
+            this->bracket_rectangle_opened = true;
             return TokenKind::LeftBracketRectangle; // [
         case ']':
+            this->bracket_rectangle_opened = false;
             return TokenKind::RightBracketRectangle; // ]
         case '{':
+            this->bracket_curly_opened = true;
             return TokenKind::LeftCurlyBrackets; // {
         case '}':
+            this->bracket_curly_opened = false;
             return TokenKind::RightCurlyBrackets; // }
         default:
             return TokenKind::None;
@@ -188,7 +198,7 @@ void Lexer::identifier_creator(std::vector<Token> &tokens, Token last_token) {
         Lexer::add_and_create_token_char(this->curr_char, this->filename, TokenKind::Identifier, create_pos(this->curr_row, this->curr_col), tokens);
         this->space = false;
     } else {
-        if (this->space == false) { 
+        if (this->space == false) {
             if (last_token.type == TokenKind::Identifier) {
                 tokens[tokens.size() - 1].value += this->curr_char;
                 this->space = false;
@@ -208,7 +218,7 @@ void Lexer::number_creator(std::vector<Token> &tokens, Token last_token) {
         Lexer::add_and_create_token_char(this->curr_char, this->filename, TokenKind::Int, create_pos(this->curr_row, this->curr_col), tokens);
         this->space = false;
     } else {
-        if (this->space == false) { 
+        if (this->space == false) {
             if (last_token.type == TokenKind::Int) {
                 tokens[tokens.size() - 1].value += this->curr_char;
                 this->space = false;
@@ -230,7 +240,7 @@ void Lexer::number_creator(std::vector<Token> &tokens, Token last_token) {
     }
 }
 
-void Lexer::unsupported_char() { 
+void Lexer::unsupported_char() {
     std::ostringstream ss;
     ss << "Unsupported character: '" << this->curr_char << "'(" << (int)this->curr_char << ")";
 
@@ -265,7 +275,7 @@ void Lexer::float_creator(std::vector<Token> &tokens, Token last_token) {
                     new Token("0.", this->filename, TokenKind::Float, create_pos(this->curr_row, this->curr_col)
                 )
             ));
-            this->space = false;  
+            this->space = false;
         }
     }
 }
@@ -288,6 +298,23 @@ void Lexer::do_next_char() {
     this->next_char = this->get_next_char();
 }
 
+void Lexer::is_brackets_ends() {
+    if (this->paren_opened) {
+      Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
+      this->is_error_message = true;
+    }
+
+    if (this->bracket_curly_opened) {
+      Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
+      this->is_error_message = true;
+    }
+
+    if (this->bracket_rectangle_opened) {
+      Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
+      this->is_error_message = true;
+    }
+}
+
 std::vector<Token> Lexer::start() {
     this->last_token = new Token("", this->filename, TokenKind::None, create_pos(0, 0));
     this->curr_row = 0;
@@ -297,9 +324,10 @@ std::vector<Token> Lexer::start() {
 
     for (this->index = 0; this->index < this->value.size(); this->index++) {
         this->do_next_char();
+        this->detection = this->detect_char(next_char);
         if (this->curr_char == '\0')
             this->eof(tokens);
-        else if (this->curr_char == '\n') 
+        else if (this->curr_char == '\n')
             this->newline(tokens);
         else if (this->curr_char == '\r' || (int)this->curr_char == -1)
             continue;
@@ -313,8 +341,8 @@ std::vector<Token> Lexer::start() {
             this->string_append(tokens);
         else if (this->curr_char == ' ')
             this->space = true;
-        else if (this->detect_char(next_char) != TokenKind::None)
-            this->add_and_create_token_char(this->curr_char, this->filename, this->detect_char(next_char), create_pos(this->curr_row, this->curr_col), tokens);
+        else if (this->detection != TokenKind::None)
+            this->add_and_create_token_char(this->curr_char, this->filename, this->detection, create_pos(this->curr_row, this->curr_col), tokens);
         else if (identifier_constant.find(this->curr_char) != std::string::npos)
             this->identifier_creator(tokens, *last_token);
         else if (number_constant.find(this->curr_char) != std::string::npos)
@@ -328,6 +356,7 @@ std::vector<Token> Lexer::start() {
     }
 
     this->is_string_ends();
+    this->is_brackets_ends();
     this->eof(tokens);
 
     this->print_all_tokens(tokens);
