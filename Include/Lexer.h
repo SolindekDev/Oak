@@ -40,7 +40,7 @@ public:
 
     void add_and_create_token_char(char curr_char, std::string filename, TokenKind type, TokenPos pos, std::vector<Token> &tokens);
 
-    char get_next_char();
+    char advance();
 
     void newline(std::vector<Token> &tokens);
 
@@ -69,6 +69,12 @@ public:
     void do_next_char();
 
     void eof(std::vector<Token> &tokens);
+
+    void create_hexadecimal();
+
+    void create_octal();
+
+    void create_binary();
 
     std::vector<Token> start();
 

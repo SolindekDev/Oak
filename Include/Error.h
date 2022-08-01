@@ -15,7 +15,8 @@
 
 #define SYNTAX_ERROR (std::string)"SyntaxError"
 #define FILE_ERROR (std::string)"FileError"
-#define UNSUPPORTED_CHAR (std::string)"UnsupportedChar"
+#define UNSUPPORTED_CHAR (std::string)"UnsupportedCharError"
+#define COMPILER_ERROR (std::string)"CompilerError"
 
 namespace Error {
 

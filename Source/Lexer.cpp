@@ -12,6 +12,7 @@ namespace OakLexer {
 
 std::string identifier_constant = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_?@";
 std::string number_constant = "0123456789";
+std::string hexadecimal_constant = "0123456789abcdefABCDEF";
 
 Token* Lexer::get_last_token(std::vector<Token> &tokens) {
     if (tokens.size() == 0)
@@ -82,24 +83,24 @@ TokenKind Lexer::detect_char(char next_char) {
         case '+':
             if (next_char != (char)6019 && next_char == '=') { // +=
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::AddAssignment;
             }
             if (next_char != (char)6019 && next_char == '+') { // ++
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::Increment;
             }
             return TokenKind::Plus; // +
         case '-':
             if (next_char != (char)6019 && next_char == '=') { // -=
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::SubtractAssignment;
             }
             if (next_char != (char)6019 && next_char == '-') { // --
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::Increment;
             }
             return TokenKind::Minus; // -
@@ -108,42 +109,42 @@ TokenKind Lexer::detect_char(char next_char) {
         case '>':
             if (next_char != (char)6019 && next_char == '=') { // >=
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::BiggerThanOrEquals;
             }
             return TokenKind::BiggerThan; // >
         case '<':
             if (next_char != (char)6019 && next_char == '=') { // >=
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::LessThanOrEquals;
             }
             return TokenKind::LessThan; // <
         case '*':
             if (next_char != (char)6019 && next_char == '=') { // *=
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::MultiplyAssignment;
             }
             return TokenKind::Multiply; // *
         case '/':
             if (next_char != (char)6019 && next_char == '=') { // /=
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::DivideAssignment;
             }
             return TokenKind::Divide; // /
         case '=':
             if (next_char != (char)6019 && next_char == '=') { // ==
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::Equals;
             }
             return TokenKind::Assignment; // =
         case '!':
             if (next_char != (char)6019 && next_char == '=') { // !=
                 this->index++;
-                this->do_next_char();
+                this->advance();
                 return TokenKind::NotEquals;
             }
             return TokenKind::Bang; // =
@@ -163,8 +164,10 @@ TokenKind Lexer::detect_char(char next_char) {
         case '}':
             this->bracket_curly_opened = false;
             return TokenKind::RightCurlyBrackets; // }
+        case '?':
+            return TokenKind::QuestionMark; // ?
         default:
-            return TokenKind::None;
+            return TokenKind::None; // none
     }
 }
 
@@ -214,6 +217,28 @@ void Lexer::identifier_creator(std::vector<Token> &tokens, Token last_token) {
 }
 
 void Lexer::number_creator(std::vector<Token> &tokens, Token last_token) {
+    if (
+        this->curr_char == '0' &&
+        (
+          tolower(this->next_char) == 'x' ||
+          tolower(this->next_char) == 'o' ||
+          tolower(this->next_char) == 'b')
+    ) {
+      switch(this->next_char) {
+        case 'x':
+          this->create_hexadecimal();
+          break;
+        case 'o':
+          this->create_octal();
+          break;
+        case 'b':
+          this->create_binary();
+          break;
+        default:
+          Error::print_error_with_positional_args(COMPILER_ERROR, "We shouldn't be here, tell about this error on github issue this might be a very serious compiler error. Code #001", create_pos(this->curr_row, this->curr_col), this->filename);
+          break;
+      }
+    }
     if (last_token.type == TokenKind::None) {
         Lexer::add_and_create_token_char(this->curr_char, this->filename, TokenKind::Int, create_pos(this->curr_row, this->curr_col), tokens);
         this->space = false;
@@ -292,7 +317,7 @@ void Lexer::is_string_ends() {
     }
 }
 
-void Lexer::do_next_char() {
+void Lexer::advance() {
     this->curr_char = this->value[this->index];
     this->last_token = this->get_last_token(tokens);
     this->next_char = this->get_next_char();
@@ -315,6 +340,21 @@ void Lexer::is_brackets_ends() {
     }
 }
 
+void create_hexadecimal() {
+    this->index+=2;
+    this->advance();
+}
+
+void create_octal() {
+    this->index+=2;
+    this->advance();
+}
+
+void create_binary() {
+    this->index+=2;
+    this->advance();
+}
+
 std::vector<Token> Lexer::start() {
     this->last_token = new Token("", this->filename, TokenKind::None, create_pos(0, 0));
     this->curr_row = 0;
@@ -323,7 +363,7 @@ std::vector<Token> Lexer::start() {
     this->curr_char = '\0';
 
     for (this->index = 0; this->index < this->value.size(); this->index++) {
-        this->do_next_char();
+        this->advance();
         this->detection = this->detect_char(next_char);
         if (this->curr_char == '\0')
             this->eof(tokens);

@@ -4,11 +4,11 @@
 
 Returned:
 
-UnsupportedChar: .\Tests\lexer\unsupported_character_error.oak:1:0: Unsupported character: 
+UnsupportedCharError: .\Tests\lexer\unsupported_character_error.oak:1:0: Unsupported character: 
 'Ô'(-30)
-UnsupportedChar: .\Tests\lexer\unsupported_character_error.oak:1:1: Unsupported character: 
+UnsupportedCharError: .\Tests\lexer\unsupported_character_error.oak:1:1: Unsupported character:
 'Ł'(-99)
-UnsupportedChar: .\Tests\lexer\unsupported_character_error.oak:1:2: Unsupported character: 
+UnsupportedCharError: .\Tests\lexer\unsupported_character_error.oak:1:2: Unsupported character:
 'Ą'(-92)
 
 */

@@ -14,6 +14,12 @@ enum TokenKind {
     String,
     // 100
     Int,
+    // 0xF
+    Hexadecimal,
+    // 0o1
+    Octal,
+    // 0b0001
+    Binary,
     // 3.14159
     Float,
     // fn
@@ -76,6 +82,8 @@ enum TokenKind {
     LeftCurlyBrackets,
     // }
     RightCurlyBrackets,
+    // ?
+    QuestionMark,
     // None
     None,
 };
