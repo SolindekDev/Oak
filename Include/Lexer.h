@@ -40,7 +40,9 @@ public:
 
     void add_and_create_token_char(char curr_char, std::string filename, TokenKind type, TokenPos pos, std::vector<Token> &tokens);
 
-    char advance();
+    char get_next_char();
+
+    void advance();
 
     void newline(std::vector<Token> &tokens);
 

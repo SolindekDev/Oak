@@ -12,7 +12,6 @@ namespace OakLexer {
 
 std::string identifier_constant = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_?@";
 std::string number_constant = "0123456789";
-std::string hexadecimal_constant = "0123456789abcdefABCDEF";
 
 Token* Lexer::get_last_token(std::vector<Token> &tokens) {
     if (tokens.size() == 0)
@@ -319,7 +318,7 @@ void Lexer::is_string_ends() {
 
 void Lexer::advance() {
     this->curr_char = this->value[this->index];
-    this->last_token = this->get_last_token(tokens);
+    this->last_token = this->get_last_token(this->tokens);
     this->next_char = this->get_next_char();
 }
 
@@ -340,17 +339,42 @@ void Lexer::is_brackets_ends() {
     }
 }
 
-void create_hexadecimal() {
+
+// While writing implementation of hexadecimal, octal
+// and binary this source code help me:
+// * https://github.com/python/cpython/blob/36fcde61ba48c4e918830691ecf4092e4e3b9b99/Parser/tokenizer.c#L1711-L1791
+// ./Tests/lexer/how_octals_works.py in this file I
+// tested how this works in python
+
+void Lexer::create_hexadecimal() {
+    this->index+=2;
+    this->advance();
+
+    this->tokens.push_back(
+        *(
+            new Token("0x", this->filename, TokenKind::Int, create_pos(this->curr_row, this->curr_col)
+        )
+    ));
+
+    do {
+      this->index++;
+
+      if (isxdigit(this->curr_char))// Function isxdigit from ctype.h header
+        this->tokens[this->tokens.size() - 1].value += this->curr_char;
+      else {
+        this->is_error_message = true;
+        Error::print_error_with_positional_args(SYNTAX_ERROR, "Invalid hexadecimal literal", create_pos(this->curr_row, this->curr_col), this->filename);
+      }
+      advance();
+    } while (this->curr_char == ' ');
+}
+
+void Lexer::create_octal() {
     this->index+=2;
     this->advance();
 }
 
-void create_octal() {
-    this->index+=2;
-    this->advance();
-}
-
-void create_binary() {
+void Lexer::create_binary() {
     this->index+=2;
     this->advance();
 }
@@ -385,7 +409,8 @@ std::vector<Token> Lexer::start() {
             this->add_and_create_token_char(this->curr_char, this->filename, this->detection, create_pos(this->curr_row, this->curr_col), tokens);
         else if (identifier_constant.find(this->curr_char) != std::string::npos)
             this->identifier_creator(tokens, *last_token);
-        else if (number_constant.find(this->curr_char) != std::string::npos)
+        // else if (number_constant.find(this->curr_char) != std::string::npos)
+        else if (isdigit(this->curr_char))
             this->number_creator(tokens, *last_token);
         else if (this->curr_char == '.')
             this->float_creator(tokens, *last_token);
