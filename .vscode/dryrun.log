@@ -1,5 +1,5 @@
-make.exe --dry-run --always-make --keep-going --print-directory
+make.exe --dry-run --keep-going --print-directory
 make: Entering directory 'c:/Users/User/Documents/Programming/C/Oak/Oak'
-clang++ -O3 -std=c++17 -I./include Source/Args.cpp Source/Error.cpp Source/File.cpp Source/Lexer.cpp Source/Main.cpp Source/Token.cpp -o Build/oak.exe
+clang++ -O3 -std=c++17 -I./Include Source/Args.cpp Source/Error.cpp Source/File.cpp Source/Lexer.cpp Source/Main.cpp Source/Token.cpp -o ./Build/oak.exe
 make: Leaving directory 'c:/Users/User/Documents/Programming/C/Oak/Oak'
  

@@ -1,6 +1,5 @@
 /*
     Oak programming language
-
     Copyright (C) 2022 SolindekDev <ytsolindekttv@gmail.com>
 */
 
@@ -79,55 +78,73 @@ TokenKind Lexer::detect_char(char next_char) {
         case ')':
             return TokenKind::Rparen; // )
         case '+':
-            if (next_char != (char)6019 && next_char == '=') // +=
+            if (next_char != (char)6019 && next_char == '=') { // +=
+                this->index++;
+                this->do_next_char();
                 return TokenKind::AddAssignment;
-            if (next_char != (char)6019 && next_char == '+') // ++
+            }
+            if (next_char != (char)6019 && next_char == '+') { // ++
+                this->index++;
+                this->do_next_char();
                 return TokenKind::Increment;
+            }
             return TokenKind::Plus; // +
         case '-':
-            if (next_char != (char)6019 && next_char == '=') // -=
+            if (next_char != (char)6019 && next_char == '=') { // -=
+                this->index++;
+                this->do_next_char();
                 return TokenKind::SubtractAssignment;
-            if (next_char != (char)6019 && next_char == '-') // --
+            }
+            if (next_char != (char)6019 && next_char == '-') { // --
+                this->index++;
+                this->do_next_char();
                 return TokenKind::Increment;
+            }
             return TokenKind::Minus; // -
         case '%':
             return TokenKind::Modulus; // %
         case '>':
-            if (next_char != (char)6019 && next_char == '=') // >=
+            if (next_char != (char)6019 && next_char == '=') { // >=
+                this->index++;
+                this->do_next_char();
                 return TokenKind::BiggerThanOrEquals;
+            }
             return TokenKind::BiggerThan; // >
         case '<':
             return TokenKind::LessThan; // <
         case '*':
-            if (next_char != (char)6019 && next_char == '=') // *=
+            if (next_char != (char)6019 && next_char == '=') { // *=
+                this->index++;
+                this->do_next_char();
                 return TokenKind::MultiplyAssignment;
+            }
             return TokenKind::Multiply; // *
         case '/':
-            if (next_char != (char)6019 && next_char == '=') // /=
+            if (next_char != (char)6019 && next_char == '=') { // /=
+                this->index++;
+                this->do_next_char();
                 return TokenKind::DivideAssignment;
+            }
             return TokenKind::Divide; // /
         case '=':
-            if (next_char != (char)6019 && next_char == '=') // ==
+            if (next_char != (char)6019 && next_char == '=') { // ==
+                std::cout << "creating equals token" << std::endl;
+                this->index++;
+                this->do_next_char();
                 return TokenKind::Equals;
+            }
             return TokenKind::Assignment; // =
         case '!':
-            if (next_char != (char)6019 && next_char == '=') // !=
+            if (next_char != (char)6019 && next_char == '=') { // !=
+                this->index++;
+                this->do_next_char();
                 return TokenKind::NotEquals;
+            }
             return TokenKind::Bang; // =
         case '|':
-            if (next_char != (char)6019 && next_char == '|') // ||
-                return TokenKind::Or;
-            
-            // Error::print_error(SYNTAX_ERROR, "Invalid operator '|'");
-            Error::print_error_with_positional_args(SYNTAX_ERROR, "Invalid operator '|'", create_pos(this->curr_row, this->curr_col), this->filename);
-            return TokenKind::None;
+            return TokenKind::Or;
         case '&':
-            if (next_char != (char)6019 && next_char == '&') // &&
-                return TokenKind::And;
-            
-            Error::print_error_with_positional_args(SYNTAX_ERROR, "Invalid operator '&'", create_pos(this->curr_row, this->curr_col), this->filename);
-            this->is_error_message = true;
-            return TokenKind::None;
+            return TokenKind::And;
         case '[':
             return TokenKind::LeftBracketRectangle; // [
         case ']':
@@ -265,21 +282,21 @@ void Lexer::is_string_ends() {
     }
 }
 
-std::vector<Token> Lexer::start() {
-    std::vector<Token> tokens;
-    auto last_token = new Token("", this->filename, TokenKind::None, create_pos(0, 0));
-    char next_char;
+void Lexer::do_next_char() {
+    this->curr_char = this->value[this->index];
+    this->last_token = this->get_last_token(tokens);
+    this->next_char = this->get_next_char();
+}
 
+std::vector<Token> Lexer::start() {
+    this->last_token = new Token("", this->filename, TokenKind::None, create_pos(0, 0));
     this->curr_row = 0;
     this->curr_col = 0;
+    this->next_char = '\0';
     this->curr_char = '\0';
 
-    for (int i = 0; i < this->value.size(); i++) {
-        this->index = i;
-        this->curr_char = this->value[i];
-        last_token = this->get_last_token(tokens);
-        next_char = this->get_next_char();
-        
+    for (this->index = 0; this->index < this->value.size(); this->index++) {
+        this->do_next_char();
         if (this->curr_char == '\0')
             this->eof(tokens);
         else if (this->curr_char == '\n') 

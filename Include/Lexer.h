@@ -1,6 +1,5 @@
 /*
     Oak programming language
-
     Copyright (C) 2022 SolindekDev <ytsolindekttv@gmail.com>
 */
 
@@ -18,8 +17,11 @@ class Lexer {
 public:
     std::string value;
     std::string filename;
+    std::vector<Token> tokens;
+    Token* last_token;
     int curr_row { 0 };
     int curr_col { 0 };
+    char next_char { 0 };
     char curr_char { 0 };
     int index { 0 };
     bool space { false };
@@ -58,13 +60,15 @@ public:
 
     void is_string_ends();
 
-    Lexer(std::string lex_value, std::string lex_filename)
-        : value(lex_value)
-        , filename(lex_filename) {}
+    void do_next_char();
+
+    void eof(std::vector<Token> &tokens);
 
     std::vector<Token> start();
 
-    void eof(std::vector<Token> &tokens);
+    Lexer(std::string lex_value, std::string lex_filename)
+        : value(lex_value)
+        , filename(lex_filename) {}
 private:
 };
 
