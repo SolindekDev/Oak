@@ -308,9 +308,10 @@ void Lexer::print_all_tokens(std::vector<Token> &tokens) {
 }
 
 void Lexer::is_string_ends() {
-    if (this->string_opened == true)
+    if (this->string_opened == true) {
         Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
-    this->is_error_message = true;
+        this->is_error_message = true;
+    }
 }
 
 void Lexer::advance() {
@@ -412,6 +413,7 @@ void Lexer::create_binary() {
 std::vector<Token> Lexer::start() {
     this->last_token = new Token("", this->filename, TokenKind::None, create_pos(0, 0));
 
+    this->is_error_message = false;
     this->curr_row = 0;
     this->curr_col = 0;
 
@@ -470,7 +472,7 @@ std::vector<Token> Lexer::start() {
     this->is_brackets_ends();
     this->eof(tokens);
 
-    this->print_all_tokens(tokens);
+    // this->print_all_tokens(tokens);
 
     if (this->is_error_message == true)
         exit(1);

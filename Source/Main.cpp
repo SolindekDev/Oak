@@ -128,8 +128,8 @@ int main(int argc, char **argv) {
                 lexer->start();
 
                 // Create parser class
-                // auto parser = new OakParser::Parser(lexer);
-                // parser->start();
+                auto parser = new OakParser::Parser(lexer);
+                parser->start();
             } else
                 Error::print_error_with_exit(FILE_ERROR, "File that you provided do not exists"); // The file do not exists.
         }

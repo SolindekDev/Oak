@@ -11,8 +11,6 @@
 namespace OakParser {
 
 void Parser::start() {
-    // to be continue...
-    std::cout << "siema" << std::endl;
 }
 
 }
