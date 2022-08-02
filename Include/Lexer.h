@@ -41,9 +41,11 @@ public:
 
     TokenKind detect_char(char next_char);
 
-    void add_and_create_token_char(char curr_char, std::string filename, TokenKind type, TokenPos pos, std::vector<Token> &tokens);
-
     char get_next_char();
+
+    bool next_char_is_not_empty_and_is(char equals);
+
+    void add_and_create_token_char(char curr_char, std::string filename, TokenKind type, TokenPos pos, std::vector<Token> &tokens);
 
     void advance();
 

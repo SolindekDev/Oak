@@ -14,10 +14,9 @@ std::string identifier_constant = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRS
 std::string number_constant = "0123456789";
 
 Token* Lexer::get_last_token(std::vector<Token> &tokens) {
-    if (tokens.size() == 0)
-        return new Token("", this->filename, TokenKind::None, create_pos(0,0));
-    else
-        return &(tokens[tokens.size() - 1]);
+    return tokens.size() == 0
+            ? new Token("", this->filename, TokenKind::None, create_pos(0,0))
+            : &(tokens[tokens.size() - 1]);
 }
 
 void Lexer::newline(std::vector<Token> &tokens) {
@@ -29,13 +28,13 @@ void Lexer::newline(std::vector<Token> &tokens) {
     this->binary_opened = false;
     this->curr_row++;
     this->curr_col = 0;
-    if (this->comment_opened_multi) {
+
+    if (this->comment_opened_multi)
         tokens.push_back(
             *(
                 new Token("\0", this->filename, TokenKind::Newline, create_pos(this->curr_row, before_col)
             )
         ));
-    }
 }
 
 void Lexer::comment_inline(std::vector<Token> &tokens) {
@@ -76,10 +75,13 @@ void Lexer::string_append(std::vector<Token> &tokens) {
     tokens[tokens.size() - 1].value += this->curr_char;
 }
 
+bool Lexer::next_char_is_not_empty_and_is(char equals) {
+    return next_char != (char)6019 && next_char == equals;
+}
+
 TokenKind Lexer::detect_char(char next_char) {
     switch (this->curr_char) {
-        case '\n':
-            return TokenKind::Newline; // \n
+        case '\n': return TokenKind::Newline; // \n
         case '(':
             this->paren_opened = true;
             return TokenKind::Lparen; // (
@@ -87,77 +89,74 @@ TokenKind Lexer::detect_char(char next_char) {
             this->paren_opened = false;
             return TokenKind::Rparen; // )
         case '+':
-            if (next_char != (char)6019 && next_char == '=') { // +=
+            if (next_char_is_not_empty_and_is('=')) { // +=
                 this->index++;
                 this->advance();
                 return TokenKind::AddAssignment;
             }
-            if (next_char != (char)6019 && next_char == '+') { // ++
+            if (next_char_is_not_empty_and_is('+')) { // ++
                 this->index++;
                 this->advance();
                 return TokenKind::Increment;
             }
             return TokenKind::Plus; // +
         case '-':
-            if (next_char != (char)6019 && next_char == '=') { // -=
+            if (next_char_is_not_empty_and_is('=')) { // -=
                 this->index++;
                 this->advance();
                 return TokenKind::SubtractAssignment;
             }
-            if (next_char != (char)6019 && next_char == '-') { // --
+            if (next_char_is_not_empty_and_is('-')) { // --
                 this->index++;
                 this->advance();
                 return TokenKind::Increment;
             }
             return TokenKind::Minus; // -
-        case '%':
-            return TokenKind::Modulus; // %
+        case '%': return TokenKind::Modulus; // %
         case '>':
-            if (next_char != (char)6019 && next_char == '=') { // >=
+            if (next_char_is_not_empty_and_is('=')) { // >=
                 this->index++;
                 this->advance();
                 return TokenKind::BiggerThanOrEquals;
             }
             return TokenKind::BiggerThan; // >
         case '<':
-            if (next_char != (char)6019 && next_char == '=') { // >=
+            if (next_char_is_not_empty_and_is('=')) { // >=
                 this->index++;
                 this->advance();
                 return TokenKind::LessThanOrEquals;
             }
             return TokenKind::LessThan; // <
         case '*':
-            if (next_char != (char)6019 && next_char == '=') { // *=
+            if (next_char_is_not_empty_and_is('=')) { // *=
                 this->index++;
                 this->advance();
                 return TokenKind::MultiplyAssignment;
             }
             return TokenKind::Multiply; // *
         case '/':
-            if (next_char != (char)6019 && next_char == '=') { // /=
+            if (next_char_is_not_empty_and_is('=')) { // /=
                 this->index++;
                 this->advance();
                 return TokenKind::DivideAssignment;
             }
             return TokenKind::Divide; // /
         case '=':
-            if (next_char != (char)6019 && next_char == '=') { // ==
+            if (next_char_is_not_empty_and_is('=')) { // ==
                 this->index++;
                 this->advance();
                 return TokenKind::Equals;
             }
             return TokenKind::Assignment; // =
         case '!':
-            if (next_char != (char)6019 && next_char == '=') { // !=
+            if (next_char_is_not_empty_and_is('=')) { // !=
                 this->index++;
                 this->advance();
                 return TokenKind::NotEquals;
             }
             return TokenKind::Bang; // =
-        case '|':
-            return TokenKind::Or;
-        case '&':
-            return TokenKind::And;
+        case '|': return TokenKind::Or;
+        case '&': return TokenKind::And;
         case '[':
             this->bracket_rectangle_opened = true;
             return TokenKind::LeftBracketRectangle; // [
@@ -170,18 +169,15 @@ TokenKind Lexer::detect_char(char next_char) {
         case '}':
             this->bracket_curly_opened = false;
             return TokenKind::RightCurlyBrackets; // }
-        case '?':
-            return TokenKind::QuestionMark; // ?
-        default:
-            return TokenKind::None; // none
+        case '?': return TokenKind::QuestionMark; // ?
+        default: return TokenKind::None; // none
     }
 }
 
 char Lexer::get_next_char() {
-    if (this->value.length() == this->index)
-        return '\2';
-    else
-        return this->value[this->index+1];
+    return this->value.length() == this->index
+           ? -1
+           : this->value[this->index+1];
 }
 
 void Lexer::eof(std::vector<Token> &tokens) {
@@ -203,23 +199,17 @@ void Lexer::add_and_create_token_char(char curr_char, std::string filename, Toke
 }
 
 void Lexer::identifier_creator(std::vector<Token> &tokens, Token last_token) {
-    if (last_token.type == TokenKind::None) {
+    if (last_token.type == TokenKind::None)
         Lexer::add_and_create_token_char(this->curr_char, this->filename, TokenKind::Identifier, create_pos(this->curr_row, this->curr_col), tokens);
-        this->space = false;
-    } else {
-        if (this->space == false) {
-            if (last_token.type == TokenKind::Identifier) {
+    else
+        if (this->space == false)
+            if (last_token.type == TokenKind::Identifier)
                 tokens[tokens.size() - 1].value += this->curr_char;
-                this->space = false;
-            } else {
+            else
                 Lexer::add_and_create_token_char(this->curr_char, this->filename, TokenKind::Identifier, create_pos(this->curr_row, this->curr_col), tokens);
-                this->space = false;
-            }
-        } else {
+        else
             Lexer::add_and_create_token_char(this->curr_char, this->filename, TokenKind::Identifier, create_pos(this->curr_row, this->curr_col), tokens);
-            this->space = false;
-        }
-    }
+    this->space = false;
 }
 
 void Lexer::number_creator(std::vector<Token> &tokens, Token last_token) {
@@ -318,10 +308,9 @@ void Lexer::print_all_tokens(std::vector<Token> &tokens) {
 }
 
 void Lexer::is_string_ends() {
-    if (this->string_opened == true) {
+    if (this->string_opened == true)
         Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
-        this->is_error_message = true;
-    }
+    this->is_error_message = true;
 }
 
 void Lexer::advance() {
@@ -347,17 +336,10 @@ void Lexer::is_brackets_ends() {
     }
 }
 
-
-// While writing implementation of hexadecimal, octal
-// and binary this source code help me:
-// * https://github.com/python/cpython/blob/36fcde61ba48c4e918830691ecf4092e4e3b9b99/Parser/tokenizer.c#L1711-L1791
-// ./Tests/lexer/how_octals_works.py in this file I
-// tested how octals works in python
-
 void Lexer::while_hexadecimal() {
-    if (isxdigit(this->curr_char)) {
+    if (isxdigit(this->curr_char))
         tokens[tokens.size() - 1].value += this->curr_char;
-    } else {
+    else {
         std::ostringstream ss;
         ss << "You used invalid literal in hexadecimal value " << "'" << this->curr_char << "'";
         Error::print_error_with_positional_args(SYNTAX_ERROR, ss.str(), create_pos(this->curr_row, this->curr_col), this->filename);
@@ -379,9 +361,9 @@ void Lexer::create_hexadecimal() {
 }
 
 void Lexer::while_octal() {
-    if (this->curr_char >= '0' && this->curr_char < '8') {
+    if (this->curr_char >= '0' && this->curr_char < '8')
         tokens[tokens.size() - 1].value += this->curr_char;
-    } else {
+    else {
         std::ostringstream ss;
         ss << "You used invalid literal in octal value " << "'" << this->curr_char << "'";
         Error::print_error_with_positional_args(SYNTAX_ERROR, ss.str(), create_pos(this->curr_row, this->curr_col), this->filename);
@@ -403,9 +385,9 @@ void Lexer::create_octal() {
 }
 
 void Lexer::while_binary() {
-    if (this->curr_char == '1' || this->curr_char == '0') {
+    if (this->curr_char == '1' || this->curr_char == '0')
         tokens[tokens.size() - 1].value += this->curr_char;
-    } else {
+    else {
         std::ostringstream ss;
         ss << "You used invalid literal in binary value " << "'" << this->curr_char << "', only 1 and 0 beep boop!";
         Error::print_error_with_positional_args(SYNTAX_ERROR, ss.str(), create_pos(this->curr_row, this->curr_col), this->filename);
@@ -426,10 +408,13 @@ void Lexer::create_binary() {
     this->space = false;
 }
 
+// Main method od lexer class (header <Lexer.h>)
 std::vector<Token> Lexer::start() {
     this->last_token = new Token("", this->filename, TokenKind::None, create_pos(0, 0));
+
     this->curr_row = 0;
     this->curr_col = 0;
+
     this->next_char = '\0';
     this->curr_char = '\0';
 
@@ -471,7 +456,6 @@ std::vector<Token> Lexer::start() {
             this->while_binary();
         else if (identifier_constant.find(this->curr_char) != std::string::npos)
             this->identifier_creator(tokens, *last_token);
-        // else if (number_constant.find(this->curr_char) != std::string::npos)
         else if (isdigit(this->curr_char))
             this->number_creator(tokens, *last_token);
         else if (this->curr_char == '.')
