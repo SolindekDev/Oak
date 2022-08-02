@@ -29,11 +29,13 @@ void Lexer::newline(std::vector<Token> &tokens) {
     this->binary_opened = false;
     this->curr_row++;
     this->curr_col = 0;
-    tokens.push_back(
-        *(
-            new Token("\0", this->filename, TokenKind::Newline, create_pos(this->curr_row, before_col)
-        )
-    ));
+    if (this->comment_opened_multi) {
+        tokens.push_back(
+            *(
+                new Token("\0", this->filename, TokenKind::Newline, create_pos(this->curr_row, before_col)
+            )
+        ));
+    }
 }
 
 void Lexer::comment_inline(std::vector<Token> &tokens) {
@@ -51,6 +53,8 @@ void Lexer::comment_multiline(std::vector<Token> &tokens) {
             this->comment_opened_multi = true;
         } else {
             this->comment_opened_multi = false;
+            this->index++;
+            this->advance();
         }
     }
 }
@@ -437,6 +441,12 @@ std::vector<Token> Lexer::start() {
         else if (this->curr_char == '\n')
             this->newline(tokens);
         else if (this->curr_char == '\r' || (int)this->curr_char == -1)
+            continue;
+        else if (this->curr_char == '/' && this->next_char == '*' && this->comment_opened_inline == false && this->comment_opened_multi == false)
+            this->comment_multiline(tokens);
+        else if (this->curr_char == '*' && this->next_char == '/' && this->comment_opened_inline == false && this->comment_opened_multi == true)
+            this->comment_multiline(tokens);
+        else if (this->comment_opened_multi == true)
             continue;
         else if (this->curr_char == '#')
             this->comment_inline(tokens);
