@@ -11,6 +11,7 @@
 #include <Error.h>
 #include <Token.h>
 #include <Lexer.h>
+#include <Parser.h>
 #include <Libs.h>
 
 // Usage, this function print out usage of oak compiler
@@ -114,7 +115,7 @@ int main(int argc, char **argv) {
             help();
         else if (parser.is_flag("--u") || parser.is_flag("--usage"))
             usage();
-          
+
         // Filename exists!!!
         if (filename.exists == true) {
             bool file_exists = File::file_exists(filename.filename); // First chceck is file existing.
@@ -125,6 +126,10 @@ int main(int argc, char **argv) {
                 // Create lexer class
                 auto lexer = new OakLexer::Lexer(value, filename.filename);
                 lexer->start();
+
+                // Create parser class
+                // auto parser = new OakParser::Parser(lexer);
+                // parser->start();
             } else
                 Error::print_error_with_exit(FILE_ERROR, "File that you provided do not exists"); // The file do not exists.
         }

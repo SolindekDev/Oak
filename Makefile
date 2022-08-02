@@ -1,3 +1,7 @@
+#
+#	Use build.js it's better
+#
+
 CC = clang++
 CC_FLAGS = -O3 -std=c++17 -I./Include
 
