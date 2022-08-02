@@ -19,6 +19,12 @@ cd oak
 node build.js && ./Build/oak --version
 ```
 More about commands in compiler in command `./Build/oak --help`
+You can use Makefile too
+```bash
+git clone https://github.com/solindekdev/oak
+cd oak
+make && ./Build/oak --version
+```
 ## Grammar and TODO
 ### Types
 **Types in Oak:**
