@@ -13,7 +13,7 @@ Oak programming language is a simple, fast, interpreter programming language for
 - Add runtime libraries 
 ## Build & Usage
 To build oak compiler you need to write down this commands:
-```py
+```bash
 git clone https://github.com/solindekdev/oak
 cd oak
 node build.js && ./Build/oak --version
