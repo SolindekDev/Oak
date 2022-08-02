@@ -16,8 +16,7 @@ To build oak compiler you need to write down this commands:
 ```py
 git clone https://github.com/solindekdev/oak
 cd oak
-make
-./Build/oak --version # Example output: 0.1v
+node build.js && ./Build/oak --version
 ```
 More about commands in compiler in command `./Build/oak --help`
 ## Grammar and TODO
