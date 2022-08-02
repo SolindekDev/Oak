@@ -1,0 +1,6 @@
+{
+  "cc": "clang++",
+  "cc_flags": "-O3 -std=c++17 -I./Include",
+  "output": "./Build/oak",
+  "src_dir": "./Source/"
+}
