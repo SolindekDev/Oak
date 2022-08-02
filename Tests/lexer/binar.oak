@@ -1,0 +1,17 @@
+0b1001 # 9
+0b0001 # 1
+0b0000 # 0
+
+/*
+
+Returned:
+
+0b1001:Int
+:Newline
+0b0001:Int
+:Newline
+0b0000:Int
+:Newline
+:EOF
+
+*/

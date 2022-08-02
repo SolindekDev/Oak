@@ -24,6 +24,9 @@ void Lexer::newline(std::vector<Token> &tokens) {
     auto before_col = this->curr_col;
     this->space = true;
     this->comment_opened_inline = false;
+    this->hexadecimal_opened = false;
+    this->octal_opened = false;
+    this->binary_opened = false;
     this->curr_row++;
     this->curr_col = 0;
     tokens.push_back(
@@ -237,6 +240,7 @@ void Lexer::number_creator(std::vector<Token> &tokens, Token last_token) {
           Error::print_error_with_positional_args(COMPILER_ERROR, "We shouldn't be here, tell about this error on github issue this might be a very serious compiler error. Code #001", create_pos(this->curr_row, this->curr_col), this->filename);
           break;
       }
+      return;
     }
     if (last_token.type == TokenKind::None) {
         Lexer::add_and_create_token_char(this->curr_char, this->filename, TokenKind::Int, create_pos(this->curr_row, this->curr_col), tokens);
@@ -344,10 +348,20 @@ void Lexer::is_brackets_ends() {
 // and binary this source code help me:
 // * https://github.com/python/cpython/blob/36fcde61ba48c4e918830691ecf4092e4e3b9b99/Parser/tokenizer.c#L1711-L1791
 // ./Tests/lexer/how_octals_works.py in this file I
-// tested how this works in python
+// tested how octals works in python
+
+void Lexer::while_hexadecimal() {
+    if (isxdigit(this->curr_char)) {
+        tokens[tokens.size() - 1].value += this->curr_char;
+    } else {
+        std::ostringstream ss;
+        ss << "You used invalid literal in hexadecimal value " << "'" << this->curr_char << "'";
+        Error::print_error_with_positional_args(SYNTAX_ERROR, ss.str(), create_pos(this->curr_row, this->curr_col), this->filename);
+    }
+}
 
 void Lexer::create_hexadecimal() {
-    this->index+=2;
+    this->index++;
     this->advance();
 
     this->tokens.push_back(
@@ -356,27 +370,56 @@ void Lexer::create_hexadecimal() {
         )
     ));
 
-    do {
-      this->index++;
+    this->hexadecimal_opened = true;
+    this->space = false;
+}
 
-      if (isxdigit(this->curr_char))// Function isxdigit from ctype.h header
-        this->tokens[this->tokens.size() - 1].value += this->curr_char;
-      else {
-        this->is_error_message = true;
-        Error::print_error_with_positional_args(SYNTAX_ERROR, "Invalid hexadecimal literal", create_pos(this->curr_row, this->curr_col), this->filename);
-      }
-      advance();
-    } while (this->curr_char == ' ');
+void Lexer::while_octal() {
+    if (this->curr_char >= '0' && this->curr_char < '8') {
+        tokens[tokens.size() - 1].value += this->curr_char;
+    } else {
+        std::ostringstream ss;
+        ss << "You used invalid literal in octal value " << "'" << this->curr_char << "'";
+        Error::print_error_with_positional_args(SYNTAX_ERROR, ss.str(), create_pos(this->curr_row, this->curr_col), this->filename);
+    }
 }
 
 void Lexer::create_octal() {
-    this->index+=2;
+    this->index++;
     this->advance();
+
+    this->tokens.push_back(
+        *(
+            new Token("0o", this->filename, TokenKind::Int, create_pos(this->curr_row, this->curr_col)
+        )
+    ));
+
+    this->octal_opened = true;
+    this->space = false;
+}
+
+void Lexer::while_binary() {
+    if (this->curr_char == '1' || this->curr_char == '0') {
+        tokens[tokens.size() - 1].value += this->curr_char;
+    } else {
+        std::ostringstream ss;
+        ss << "You used invalid literal in binary value " << "'" << this->curr_char << "', only 1 and 0 beep boop!";
+        Error::print_error_with_positional_args(SYNTAX_ERROR, ss.str(), create_pos(this->curr_row, this->curr_col), this->filename);
+    }
 }
 
 void Lexer::create_binary() {
-    this->index+=2;
+    this->index++;
     this->advance();
+
+    this->tokens.push_back(
+        *(
+            new Token("0b", this->filename, TokenKind::Int, create_pos(this->curr_row, this->curr_col)
+        )
+    ));
+
+    this->binary_opened = true;
+    this->space = false;
 }
 
 std::vector<Token> Lexer::start() {
@@ -403,10 +446,19 @@ std::vector<Token> Lexer::start() {
             this->string_creator(tokens);
         else if (this->string_opened == true)
             this->string_append(tokens);
-        else if (this->curr_char == ' ')
+        else if (this->curr_char == ' ') {
             this->space = true;
-        else if (this->detection != TokenKind::None)
+            this->hexadecimal_opened = false; // End of hexadecimal value is when space is true
+            this->octal_opened = false; // End of octal value is when space is true
+            this->binary_opened = false; // End of binary value is when space is true
+        } else if (this->detection != TokenKind::None)
             this->add_and_create_token_char(this->curr_char, this->filename, this->detection, create_pos(this->curr_row, this->curr_col), tokens);
+        else if (this->hexadecimal_opened == true && this->space == false)
+            this->while_hexadecimal();
+        else if (this->octal_opened == true && this->space == false)
+            this->while_octal();
+        else if (this->binary_opened == true && this->space == false)
+            this->while_binary();
         else if (identifier_constant.find(this->curr_char) != std::string::npos)
             this->identifier_creator(tokens, *last_token);
         // else if (number_constant.find(this->curr_char) != std::string::npos)

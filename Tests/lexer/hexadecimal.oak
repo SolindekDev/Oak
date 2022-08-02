@@ -1,1 +1,18 @@
-0x1491
+0xABCDEFabcdef1234567890 Identifier # 0xABCDEFabcdef1234567890 <- that's a big number
+0x10 10 "test 0x10" 0xF
+
+/*
+
+Returned:
+
+0xABCDEFabcdef1234567890:Int
+Identifier:Identifier
+:Newline
+0x10:Int
+10:Int
+test 0x10:String
+0xF:Int
+:Newline
+:EOF
+
+*/

@@ -33,6 +33,9 @@ public:
     bool paren_opened { false };
     bool string_opened { false };
     bool is_error_message { false };
+    bool hexadecimal_opened { false };
+    bool octal_opened { false };
+    bool binary_opened { false };
 
     Token* get_last_token(std::vector<Token> &tokens);
 
@@ -74,9 +77,15 @@ public:
 
     void create_hexadecimal();
 
+    void while_hexadecimal();
+
     void create_octal();
 
+    void while_octal();
+
     void create_binary();
+
+    void while_binary();
 
     std::vector<Token> start();
 
