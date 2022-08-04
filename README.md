@@ -76,6 +76,9 @@ let name: string = "Bruno"
 let pi: float = 3.14159
 let dynamic_var: dyn = "Dynamic changes" // String
 ```
+
+**TODO**
+- [ ] Variable declaration
 ### Function declaration & calls and parameters
 To declare function in Oak you need to use this grammar:
 ```rs 
