@@ -79,6 +79,9 @@ let dynamic_var: dyn = "Dynamic changes" // String
 
 **TODO**
 - [ ] Variable declaration
+- [ ] Variable usage
+- [ ] Variable assigment
+
 ### Function declaration & calls and parameters
 To declare function in Oak you need to use this grammar:
 ```rs 
