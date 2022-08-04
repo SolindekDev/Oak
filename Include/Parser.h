@@ -49,9 +49,16 @@ typedef struct CallFunctionAST {
   std::vector<FunctionArgsAST*> args;
 } CallFunctionAST;
 
+typedef struct BinaryExpressionAST {
+    Token* lhs;
+    Token* rhs;
+    Token* operator_;
+} BinaryExpressionAST;
+
 typedef struct StatementAST {
   FunctionAST funcion;
   CallFunctionAST call;
+  BinaryExpressionAST binary;
 
   StatementKind type;
 } StatementAST;
@@ -70,21 +77,26 @@ public:
     Token* current_token;
 
     bool is_error_message { 0 };
+    bool binary_exp_open { 0 };
     int index { 0 };
 
-    Token* parse_math(int precendence);
-
     Token* get_next_token();
+
+    Token* operator_search();
+
+    Token* number_search();
+
+    BinaryExpressionAST binary_expression();
 
     bool is_eof();
 
     bool is_math_operator();
 
-    int get_precendences_by_operator(Token* token);
-
     bool is_identifier_keyword(std::string value_id);
 
     void advance();
+
+    void parse_math();
 
     void parse_if();
 

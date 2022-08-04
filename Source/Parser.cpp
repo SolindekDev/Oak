@@ -233,75 +233,70 @@ bool Parser::is_math_operator() {
            this->current_token->type == TokenKind::Modulus;
 }
 
-int Parser::get_precendences_by_operator(Token* token) {
-    switch (token->type) {
-        case TokenKind::Plus:
-            return 0;
-            break;
-        case TokenKind::Minus:
-            return 1;
-            break;
-        case TokenKind::Multiply:
-            return 2;
-            break;
-        case TokenKind::Divide:
-            return 3;
-            break;
-        case TokenKind::Modulus:
-            return 4;
-            break;
-        default:
-            Error::print_error_with_positional_args(
-                COMPILER_ERROR,
-                "We shouldn't be here, tell about this error on github issue this might be a very serious compiler error. Code #003",
-                create_pos(
-                    this->current_token->pos.row,
-                    this->current_token->pos.col
-                ),
-                this->lexer->filename
-            );
-            this->is_error_message = true;
-            return 0;
-            break;
-    }
+Token* Parser::operator_search() {
+    this->index++;
+    this->advance();
+
+    if (this->is_eof())
+        return new Token("", this->lexer->filename, TokenKind::None, create_pos(0, 0));
+    if (!this->is_math_operator()) {
+          Error::print_error_with_positional_args(
+              SYNTAX_ERROR,
+              "Expected an math operator after a number",
+              create_pos(
+                  this->current_token->pos.row,
+                  this->current_token->pos.col
+              ),
+              this->lexer->filename
+          );
+          this->is_error_message = true;
+          exit(1);
+      }
+
+      return this->current_token;
 }
 
-Token* Parser::parse_math(int precendence) {
+Token* Parser::number_search() {
+    this->index++;
+    this->advance();
+
+    if (this->is_eof())
+        return new Token("", this->lexer->filename, TokenKind::None, create_pos(0, 0));
+    if (this->current_token->type == TokenKind::Int || this->current_token->type == TokenKind::Float)
+        return this->current_token;
+    else
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "Expected an number after math operator",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col
+            ),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+}
+
+BinaryExpressionAST Parser::binary_expression() {
     auto lhs = this->current_token;
+    auto operator_ = this->operator_search();
+    auto rhs = this->number_search();
 
-    while (1) {
-        this->index++;
-        this->advance();
+    return BinaryExpressionAST{ lhs, rhs, operator_ };
+}
 
-        if (this->is_eof())
-            break;
-        if (!this->is_math_operator()) {
-            Error::print_error_with_positional_args(
-                SYNTAX_ERROR,
-                "Expected an math operator after a number",
-                create_pos(
-                    this->current_token->pos.row,
-                    this->current_token->pos.col
-                ),
-                this->lexer->filename
-            );
-            this->is_error_message = true;
-          }
+void Parser::parse_math() {
+     if (binary_exp_open == true)
+         Error::todo("binary_exp_open ");
+     else {
+         auto binary_exp = binary_expression();
+         this->binary_exp_open = true;
 
-          auto precendence_ = Oak_Precedences[get_precendences_by_operator(this->current_token)];
-          if (precendence_.left < precendence)
-              break;
-
-          this->index++;
-          this->advance();
-
-          auto rhs = parse_math(precendence_.right);
-
-          std::cout << lhs->value << ":" << lhs->type_string() << std::endl;
-          std::cout << rhs->value << ":" << rhs->type_string() << std::endl;
-    }
-
-    return lhs;
+         std::cout << binary_exp.lhs->value << ":" << binary_exp.lhs->type_string() << std::endl;
+         std::cout << binary_exp.operator_->value << ":" << binary_exp.operator_->type_string() << std::endl;
+         std::cout << binary_exp.rhs->value << ":" << binary_exp.rhs->type_string() << std::endl;
+     }
 }
 
 void Parser::parse_identifier() {
@@ -323,9 +318,11 @@ void Parser::start() {
 
         if (this->current_token->type == TokenKind::Identifier)
             this->parse_identifier();
+        else if (this->is_math_operator() && this->binary_exp_open == true)
+            this->parse_math();
         else if (this->current_token->type == TokenKind::Int ||
                  this->current_token->type == TokenKind::Float)
-            this->parse_math(0);
+            this->parse_math();
     }
 
     if (this->is_error_message == true)
