@@ -12,10 +12,12 @@
 
 #define RESET "\e[0m"
 #define RED "\e[0;31m"
+#define YELLOW "\e[0;33m"
 
 #define SYNTAX_ERROR (std::string)"SyntaxError"
 #define FILE_ERROR (std::string)"FileError"
 #define UNSUPPORTED_CHAR (std::string)"UnsupportedCharError"
+#define UNSUPPORTED_KEYWORD (std::string)"UnsupportedKeywordError"
 #define COMPILER_ERROR (std::string)"CompilerError"
 
 namespace Error {
@@ -23,6 +25,7 @@ namespace Error {
 void print_error_with_exit(std::string title, std::string message);
 void print_error(std::string title, std::string message);
 void print_error_with_positional_args(std::string title, std::string message, TokenPos pos, std::string filename);
+void todo(std::string to_implement);
 
 }
 

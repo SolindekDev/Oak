@@ -91,6 +91,7 @@ void help() {
               << "    --sc, --show-code-gen - Print out generated code\n"
               << "    --b, --build          - Build program to executable\n"
               << "    --br, --build-and-run - Build and run program\n\n"
+              << "    --pt, --print-tokens  - Print out tokens from lexer\n\n"
               << "Usage: oak [--version] [--help] [options] [filename.oak]"
               << std::endl;
 }
@@ -104,10 +105,11 @@ int main(int argc, char **argv) {
         Args::Parser parser = Args::Parser(argc, argv);  // Argument parser from <Args.h> header file.
         Args::Filename filename = parser.get_filename(); // Get filename from arguments if there's no filename in arguments then filename.exists is false.
 
-        auto source_only_flag   = parser.is_flag("--s") || parser.is_flag("--source-only");    // Is source-only flag enabled
-        auto show_code_gen_flag = parser.is_flag("--sc") || parser.is_flag("--show-code-gen"); // Is show-code-gen flag enabled
-        auto build_flag         = parser.is_flag("--b") || parser.is_flag("--build");          // Is build flag enabled
-        auto build_and_run_flag = parser.is_flag("--br") || parser.is_flag("--build-and-run"); // Is build-and-run flag enabled
+        auto source_only_flag   = parser.is_flag("--s")  || parser.is_flag("--source-only");    // Is source-only flag enabled
+        auto show_code_gen_flag = parser.is_flag("--sc") || parser.is_flag("--show-code-gen");  // Is show-code-gen flag enabled
+        auto build_flag         = parser.is_flag("--b")  || parser.is_flag("--build");          // Is build flag enabled
+        auto build_and_run_flag = parser.is_flag("--br") || parser.is_flag("--build-and-run");  // Is build-and-run flag enabled
+        auto print_tokens       = parser.is_flag("--pt") || parser.is_flag("--print-tokens");   // Is print-tokens flag enabled
 
         if (parser.is_flag("--version") || parser.is_flag("--v"))
             version();
@@ -125,7 +127,7 @@ int main(int argc, char **argv) {
             if (file_exists == true) {
                 // Create lexer class
                 auto lexer = new OakLexer::Lexer(value, filename.filename);
-                lexer->start();
+                lexer->start(print_tokens);
 
                 // Create parser class
                 auto parser = new OakParser::Parser(lexer);

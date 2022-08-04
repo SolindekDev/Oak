@@ -23,4 +23,8 @@ void print_error_with_positional_args(std::string title, std::string message, To
     std::cout << RED << title << RESET << ": " << filename << ":" << pos.row+1 << ":" << pos.col << ": " << message << std::endl;
 }
 
+void todo(std::string to_implement) {
+    std::cout << YELLOW << "TODO" << RESET << ": " << to_implement << "is not implemented yet" << std::endl;
+}
+
 }

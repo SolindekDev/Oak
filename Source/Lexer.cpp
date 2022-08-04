@@ -410,7 +410,7 @@ void Lexer::create_binary() {
 }
 
 // Main method od lexer class (header <Lexer.h>)
-std::vector<Token> Lexer::start() {
+std::vector<Token> Lexer::start(bool is_print_token_flag) {
     this->last_token = new Token("", this->filename, TokenKind::None, create_pos(0, 0));
 
     this->is_error_message = false;

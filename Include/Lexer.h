@@ -89,7 +89,7 @@ public:
 
     void while_binary();
 
-    std::vector<Token> start();
+    std::vector<Token> start(bool is_print_token_flag);
 
     Lexer(std::string lex_value, std::string lex_filename)
         : value(lex_value)

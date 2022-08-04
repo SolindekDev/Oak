@@ -20,15 +20,74 @@
 #include <Lexer.h>
 #include <Libs.h>
 
-typedef struct Program {
-    std::vector<Statement
-} Program;
+enum StatementKind {
+    BinaryExpression,
+    FunctionDeclare,
+    FunctionCall,
+};
+
+typedef struct FunctionArgsAST {
+  std::string name;
+  Token* value;
+  std::vector<FunctionArgsAST*> args;
+} FunctionArgsAST;
+
+typedef struct FunctionAST {
+  std::string name;
+  std::vector<StatementKind*> body;
+} FunctionAST;
+
+typedef struct CallFunctionAST {
+  std::string name;
+  FunctionAST* fn;
+  std::vector<FunctionArgsAST*> args;
+} CallFunctionAST;
+
+typedef struct StatementAST {
+  FunctionAST funcion;
+  CallFunctionAST call;
+
+  StatementKind type;
+} StatementAST;
+
+typedef struct ProgramAST {
+    std::vector<StatementAST*> body;
+} ProgramAST;
 
 namespace OakParser {
 
 class Parser {
 public:
     OakLexer::Lexer* lexer;
+    ProgramAST ast;
+    Token* next_token;
+    Token* current_token;
+
+    bool is_error_message { 0 };
+    int index { 0 };
+
+    Token* get_next_token();
+
+    bool is_eof();
+
+    void advance();
+
+    bool is_identifier_keyword(std::string value_id);
+
+    void parse_if();
+    void parse_elif();
+    void parse_else();
+    void parse_let();
+    void parse_namespace();
+    void parse_function();
+    void parse_const();
+    void parse_while();
+    void parse_for();
+    void parse_class();
+
+    void parse_identifier();
+
+    void parse_keyword();
 
     void start();
 
