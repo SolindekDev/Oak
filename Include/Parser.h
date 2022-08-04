@@ -26,6 +26,12 @@ enum StatementKind {
     FunctionCall,
 };
 
+typedef struct Precedences {
+    std::string operator_;
+    int left;
+    int right;
+} Precedences;
+
 typedef struct FunctionArgsAST {
   std::string name;
   Token* value;
@@ -66,26 +72,42 @@ public:
     bool is_error_message { 0 };
     int index { 0 };
 
+    Token* parse_math(int precendence);
+
     Token* get_next_token();
 
     bool is_eof();
 
-    void advance();
+    bool is_math_operator();
+
+    int get_precendences_by_operator(Token* token);
 
     bool is_identifier_keyword(std::string value_id);
 
+    void advance();
+
     void parse_if();
+
     void parse_elif();
+
     void parse_else();
+
     void parse_let();
+
     void parse_namespace();
+
     void parse_function();
+
     void parse_const();
+
     void parse_while();
+
     void parse_for();
+
     void parse_class();
 
     void parse_identifier();
+
 
     void parse_keyword();
 

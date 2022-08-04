@@ -34,8 +34,8 @@ function main() {
         console.log(`\x1b[0;32mOAK\x1b[0m: Compiling all files to objects... [\x1b[0;33m${already_compiled}\x1b[0m / \x1b[0;33m${files.length}\x1b[0m]`)
         for (let i = 0; i < files.length; i++) {
             exec(`${settings.cc} -c -g ${settings.cc_flags} ${settings.src_dir + files[i]} -o ${settings.src_dir + files[i].replace(".cpp", ".o")}`, (error, stdout, stderr) => {
-                if (error) { console.clear(); console.log(`${error.message}`); clean_up_and_exit() }
-                if (stderr) { console.clear(); console.log(`${stderr}`); clean_up_and_exit() }
+                if (error) { console.log(`${error.message}`); clean_up_and_exit() }
+                if (stderr) { console.log(`${stderr}`); clean_up_and_exit() }
                 already_compiled++
                 objs.push(settings.src_dir + files[i].replace(".cpp", ".o"))
                 console.clear()
@@ -43,8 +43,8 @@ function main() {
                 if (already_compiled == files.length) {
                     console.log(`\x1b[0;32mOAK\x1b[0m: Linking objects to executable file [\x1b[0;33m0\x1b[0m / \x1b[0;33m1\x1b[0m]`)
                     exec(`${settings.cc} ${settings.cc_flags} ${objs.join(" ")} -o ${settings.output + add_exe_end()}`, (error, stdout, stderr) => {
-                        if (error) { console.clear(); console.log(`${error.message}`); clean_up_and_exit() }
-                        if (stderr) { console.clear(); console.log(`${stderr}`); clean_up_and_exit() }
+                        if (error) { console.log(`${error.message}`); clean_up_and_exit() }
+                        if (stderr) { console.log(`${stderr}`); clean_up_and_exit() }
                         console.log(`\x1b[0;32mOAK\x1b[0m: Linking objects to executable file [\x1b[0;33m1\x1b[0m / \x1b[0;33m1\x1b[0m]`)
                         console.log(`\x1b[0;32mOAK\x1b[0m: Cleaning object files... `)
                         for (let i1 = 0; i1 < files.length; i1++) {
