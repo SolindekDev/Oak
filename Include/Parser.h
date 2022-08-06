@@ -18,61 +18,20 @@
 
 #include <Token.h>
 #include <Lexer.h>
+#include <AST.h>
 #include <Libs.h>
 
-enum StatementKind {
-    BinaryExpression,
-    FunctionDeclare,
-    FunctionCall,
-};
-
 typedef struct Precedences {
-    std::string operator_;
-    int left;
-    int right;
+  std::string operator_;
+  int left;
+  int right;
 } Precedences;
-
-typedef struct FunctionArgsAST {
-  std::string name;
-  Token* value;
-  std::vector<FunctionArgsAST*> args;
-} FunctionArgsAST;
-
-typedef struct FunctionAST {
-  std::string name;
-  std::vector<StatementKind*> body;
-} FunctionAST;
-
-typedef struct CallFunctionAST {
-  std::string name;
-  FunctionAST* fn;
-  std::vector<FunctionArgsAST*> args;
-} CallFunctionAST;
-
-typedef struct BinaryExpressionAST {
-    Token* lhs;
-    Token* rhs;
-    Token* operator_;
-} BinaryExpressionAST;
-
-typedef struct StatementAST {
-  FunctionAST funcion;
-  CallFunctionAST call;
-  BinaryExpressionAST binary;
-
-  StatementKind type;
-} StatementAST;
-
-typedef struct ProgramAST {
-    std::vector<StatementAST*> body;
-} ProgramAST;
 
 namespace OakParser {
 
 class Parser {
 public:
     OakLexer::Lexer* lexer;
-    ProgramAST ast;
     Token* next_token;
     Token* current_token;
 
@@ -82,11 +41,11 @@ public:
 
     Token* get_next_token();
 
-    Token* operator_search();
+    NumberNodeAST* number_search();
 
-    Token* number_search();
+    TokenKind search_for_op();
 
-    BinaryExpressionAST binary_expression();
+    NumberNodeAST* token_to_number_node_ast(Token* &tk);
 
     bool is_eof();
 
@@ -119,7 +78,6 @@ public:
     void parse_class();
 
     void parse_identifier();
-
 
     void parse_keyword();
 

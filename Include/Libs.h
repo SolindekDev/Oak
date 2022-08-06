@@ -20,6 +20,8 @@
 #include <ctime>
 #include <cstddef>
 #include <csignal>
+#include <variant>
+#include <any>
 #include <ctype.h>
 
 #endif /* __OAK__Libs__H__ */

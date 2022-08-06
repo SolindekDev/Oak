@@ -7,6 +7,7 @@
 #include <Parser.h>
 #include <Token.h>
 #include <Error.h>
+#include <AST.h>
 #include <Libs.h>
 
 const std::string Oak_Keywords[10] = {
@@ -233,38 +234,67 @@ bool Parser::is_math_operator() {
            this->current_token->type == TokenKind::Modulus;
 }
 
-Token* Parser::operator_search() {
-    this->index++;
-    this->advance();
+void Parser::parse_identifier() {
+    auto is_keyword = this->is_identifier_keyword(this->current_token->value);
 
-    if (this->is_eof())
-        return new Token("", this->lexer->filename, TokenKind::None, create_pos(0, 0));
-    if (!this->is_math_operator()) {
-          Error::print_error_with_positional_args(
-              SYNTAX_ERROR,
-              "Expected an math operator after a number",
-              create_pos(
-                  this->current_token->pos.row,
-                  this->current_token->pos.col
-              ),
-              this->lexer->filename
-          );
-          this->is_error_message = true;
-          exit(1);
-      }
-
-      return this->current_token;
+    if (is_keyword) {
+        this->parse_keyword();
+    } else {
+        Error::todo("check is identifier function or a variable ");
+    }
 }
 
-Token* Parser::number_search() {
+NumberNodeAST* Parser::token_to_number_node_ast(Token* &tk) {
+    // TODO: implement hex, octal and binary conversion
+
+    if (tk->value.find('.') != std::string::npos)
+        return new NumberNodeAST(std::stod(tk->value));
+    else if (tk->value.find('o') != std::string::npos)
+        Error::todo("octal in math operations ");
+    else if (tk->value.find('x') != std::string::npos)
+        Error::todo("hexadecimal in math operations ");
+    else if (tk->value.find('b') != std::string::npos)
+        Error::todo("binary in math operations ");
+    else
+        return new NumberNodeAST(std::stoi(tk->value));
+
+    return new NumberNodeAST(0);
+}
+
+TokenKind Parser::search_for_op() {
     this->index++;
     this->advance();
 
     if (this->is_eof())
-        return new Token("", this->lexer->filename, TokenKind::None, create_pos(0, 0));
-    if (this->current_token->type == TokenKind::Int || this->current_token->type == TokenKind::Float)
-        return this->current_token;
-    else
+        return TokenKind::None;
+    if (!this->is_math_operator()) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "Expected an math operator after a number",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col
+            ),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+
+    return this->current_token->type;
+}
+
+NumberNodeAST* Parser::number_search() {
+    this->index++;
+    this->advance();
+
+    if (this->is_eof())
+        return new NumberNodeAST(0);
+
+    if (this->current_token->type == TokenKind::Int ||
+        this->current_token->type == TokenKind::Float)
+        return token_to_number_node_ast(this->current_token);
+    else {
         Error::print_error_with_positional_args(
             SYNTAX_ERROR,
             "Expected an number after math operator",
@@ -276,37 +306,19 @@ Token* Parser::number_search() {
         );
         this->is_error_message = true;
         exit(1);
-}
-
-BinaryExpressionAST Parser::binary_expression() {
-    auto lhs = this->current_token;
-    auto operator_ = this->operator_search();
-    auto rhs = this->number_search();
-
-    return BinaryExpressionAST{ lhs, rhs, operator_ };
+    }
 }
 
 void Parser::parse_math() {
-     if (binary_exp_open == true)
-         Error::todo("binary_exp_open ");
-     else {
-         auto binary_exp = binary_expression();
-         this->binary_exp_open = true;
+    auto math_exp_node = new MathExpressionNodeAST();
 
-         std::cout << binary_exp.lhs->value << ":" << binary_exp.lhs->type_string() << std::endl;
-         std::cout << binary_exp.operator_->value << ":" << binary_exp.operator_->type_string() << std::endl;
-         std::cout << binary_exp.rhs->value << ":" << binary_exp.rhs->type_string() << std::endl;
-     }
-}
+    auto lhs = this->token_to_number_node_ast(this->current_token);
+    auto op = this->search_for_op();
+    auto rhs = this->number_search();
+    auto math_node = new MathNodeAST(lhs, rhs, op);
 
-void Parser::parse_identifier() {
-    auto is_keyword = this->is_identifier_keyword(this->current_token->value);
-
-    if (is_keyword) {
-        this->parse_keyword();
-    } else {
-        Error::todo("check is identifier function or a variable ");
-    }
+    math_exp_node->nodes.push_back(math_node);
+    math_exp_node->print();
 }
 
 void Parser::start() {
@@ -318,8 +330,6 @@ void Parser::start() {
 
         if (this->current_token->type == TokenKind::Identifier)
             this->parse_identifier();
-        else if (this->is_math_operator() && this->binary_exp_open == true)
-            this->parse_math();
         else if (this->current_token->type == TokenKind::Int ||
                  this->current_token->type == TokenKind::Float)
             this->parse_math();

@@ -89,6 +89,10 @@ typedef struct TokenPos {
 
 TokenPos create_pos(int row, int col);
 
+std::string type_string_(TokenKind kind);
+
+std::string operator_to_str(TokenKind kind);
+
 class Token {
 public:
     std::string value;

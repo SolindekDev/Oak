@@ -12,8 +12,33 @@ TokenPos create_pos(int row, int col) {
     return TokenPos{row,col};
 }
 
-std::string Token::type_string() {
-        switch (this->type) {
+std::string operator_to_str(TokenKind kind) {
+    switch (kind) {
+      case TokenKind::Plus:
+          return (std::string)"+";
+          break;
+      case TokenKind::Minus:
+          return (std::string)"-";
+          break;
+      case TokenKind::Divide:
+          return (std::string)"/";
+          break;
+      case TokenKind::Multiply:
+          return (std::string)"*";
+          break;
+      case TokenKind::Modulus:
+          return (std::string)"%";
+          break;
+      default:
+          return (std::string)"UNKNOWN";
+          break;
+    }
+
+    return "UNKNOWN";
+}
+
+std::string type_string_(TokenKind kind) {
+    switch (kind) {
         case TokenKind::String:
             return (std::string)"String";
             break;
@@ -117,10 +142,14 @@ std::string Token::type_string() {
         case TokenKind::None:
             return (std::string)"None";
             break;
-        default: 
+        default:
             return (std::string)"Unknown Type";
             break;
     }
 
     return "Unknown Type";
+}
+
+std::string Token::type_string() {
+        return type_string_(this->type);
 }
