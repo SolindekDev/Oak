@@ -98,6 +98,7 @@ void help() {
 
 // Main entry of compiler.
 int main(int argc, char **argv) {
+    // std::cout << __LINE__ << " " << __FILE_NAME__ << " " << __FUNCTION__ << std::endl;
     // If there's less than 2 argv
     if (argc < 2)
         usage();

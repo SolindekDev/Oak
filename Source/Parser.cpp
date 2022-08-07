@@ -310,15 +310,50 @@ NumberNodeAST* Parser::number_search() {
 }
 
 void Parser::parse_math() {
-    auto math_exp_node = new MathExpressionNodeAST();
+    if (this->binary_exp_open == true) {
+        if (this->program->body[this->program->body.size() - 1]->type == "MathExpressionNodeAST") {
+            if (is_math_operator()) {
+                auto lhs = new NumberNodeAST(0);
+                auto op = this->current_token->type;
+                auto rhs = this->number_search();
+                auto math_node = new MathNodeAST(lhs, rhs, op);
 
-    auto lhs = this->token_to_number_node_ast(this->current_token);
-    auto op = this->search_for_op();
-    auto rhs = this->number_search();
-    auto math_node = new MathNodeAST(lhs, rhs, op);
+                math_node->end_to_last = true;
+                std::cout << this->program->body[this->program->body.size() - 1]->nodes.size() << std::endl;
+                this->program->
+                    body[this->program->body.size() - 1]->
+                    nodes.push_back(math_node);
 
-    math_exp_node->nodes.push_back(math_node);
-    math_exp_node->print();
+                std::cout << this->program->body[this->program->body.size() - 1]->nodes.size() << std::endl;
+            }
+        } else {
+            Error::print_error_with_positional_args(
+                SYNTAX_ERROR,
+                "Expected math operation before operator or number",
+                create_pos(
+                    this->current_token->pos.row,
+                    this->current_token->pos.col
+                ),
+                this->lexer->filename
+            );
+            this->is_error_message = true;
+            exit(1);
+        }
+    } else {
+        this->binary_exp_open = true;
+        auto math_exp_node = new MathExpressionNodeAST();
+
+        auto lhs = this->token_to_number_node_ast(this->current_token);
+        auto op = this->search_for_op();
+        auto rhs = this->number_search();
+        auto math_node = new MathNodeAST(lhs, rhs, op);
+
+        math_exp_node->nodes.push_back(math_node);
+
+        std::cout << program->body[program->body.size() - 1]->nodes.size() << std::endl;
+        program->body.push_back(math_exp_node);
+        std::cout << program->body[program->body.size() - 1]->nodes.size() << std::endl;
+    }
 }
 
 void Parser::start() {
@@ -330,10 +365,14 @@ void Parser::start() {
 
         if (this->current_token->type == TokenKind::Identifier)
             this->parse_identifier();
+        else if (this->binary_exp_open == true)
+            this->parse_math();
         else if (this->current_token->type == TokenKind::Int ||
                  this->current_token->type == TokenKind::Float)
             this->parse_math();
     }
+
+    this->program->body[this->program->body.size() - 1]->print();
 
     if (this->is_error_message == true)
       exit(1);

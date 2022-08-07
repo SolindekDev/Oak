@@ -12,9 +12,12 @@
 
 class NodeAST {
 public:
-    NodeAST() {};
+    std::string type;
+    std::vector<std::any> nodes;
 
     virtual void print() {};
+
+    NodeAST() {};
 private:
 };
 
@@ -25,7 +28,7 @@ public:
     void print();
 
     NumberNodeAST(std::variant<int, float, double> num)
-      : number(num) {}
+      : number(num) { type = "NumberNodeAST"; }
 private:
 };
 
@@ -34,13 +37,14 @@ public:
     NumberNodeAST* lhs;
     NumberNodeAST* rhs;
     TokenKind op;
+    bool end_to_last;
 
     void print();
 
     MathNodeAST(NumberNodeAST* _lhs, NumberNodeAST* _rhs, TokenKind _op)
         : lhs(_lhs)
         , rhs(_rhs)
-        , op(_op) {}
+        , op(_op) { type = "MathNodeAST"; }
 private:
 };
 
@@ -50,12 +54,13 @@ public:
 
     void print();
 
-    MathExpressionNodeAST() {};
+    MathExpressionNodeAST() { type = "MathExpressionNodeAST"; };
 private:
 };
 
 class ProgramAST {
 public:
+    std::string type = "Program";
     std::vector<NodeAST*> body;
 
     ProgramAST() {};

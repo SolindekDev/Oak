@@ -22,6 +22,7 @@
 #include <csignal>
 #include <variant>
 #include <any>
+#include <optional>
 #include <ctype.h>
 
 #endif /* __OAK__Libs__H__ */

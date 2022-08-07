@@ -10,7 +10,7 @@ Oak programming language is a simple, fast, interpreter programming language for
 - Lexer
 - Parser
 - Codegen
-- Add runtime libraries 
+- Add runtime libraries
 ## Build & Usage
 To build oak compiler you need to write down this commands:
 ```bash
@@ -26,86 +26,82 @@ cd oak
 make && ./Build/oak --version
 ```
 ## Grammar and TODO
-### Types
-**Types in Oak:**
-- **Integers**
-  - *int16*
-  - *int32*
-  - *int64* (`defualt`)
-  - *int* (`alias of int64`)
-- **Float numbers**
-  - *float* (`alias of float32`)
-  - *float32* (`default`)
-  - *float64*
-- **String**
-  - *string*
-  - *char* (`only one character`)
-- **Boolean**
-  - *bool*
-- **Arrays**
-  - [More about arrays in array part](#array)
-
-**Examples:**
-```javascript
-3.14159 // float (float32)
-100 // int (int64)
-'a' // char
-"ABC" // string
-true // bool
-[1, 2, 3, 4, 5] // array of int (int64)
+### Hello, World! Program
 ```
-**TODO:**
-- [ ] Implement type detection
+fn main [
+    push: "Hello, World!";
+    println: ;
+]
+```
+### Stack
+#### Pushing to stack
+On stack you can push every type
+```
+fn main [
+    push: "Roben";
+    push: 18;
+]
+```
+#### Poping to stack
+You can pop from stack and save it in variable
+```
+fn get_name_and_age [
+    push: "Roben";
+    push: 18;
+]
 
+fn main [
+    call: get_name_and_age; # Calling to function
+
+    # Creating important variables
+    let: text_to_print | string;
+    let: name | string;
+    let: age | int;
+
+    # Pop from stack name and age
+    # they was push to stack in
+    # get_name_and_age function
+    pop: name;
+    pop: age;
+
+    # Add to string
+    text_to_print<>add: "Your name is ";
+    text_to_print<>add: name;
+    text_to_print<>add: " and you are ";
+    text_to_print<>add: age;
+    text_to_print<>add: " years old.";
+
+    # Push this string to stack
+    # and after it print it out
+    push: text_to_print;
+    println: ;
+]
+```
 ### Variables declaration & usage
-To declare variable in Oak you need to use this grammar:
-```javascript
-let [NAME_OF_VAR]: [TYPE_OF_VAR] = [VALUE_OF_VAR]
 ```
-- `NAME_OF_VAR` For example **age_of_woman**, in oak to name a variable you need to use snake_case in lower case.
-- `TYPE_OF_VAR` More about [types here!](#types), for example **int**
-- `VALUE_OF_VAR` Value can be an:
-  - Math expression for example **2 + 2** or **2 * (5 + 6)**
-  - Only an value for example **100**
-  - Return of function, for example you create a [function](#function-calls--parameters) with return type **int** an you are returning a value **69**. That will be in variable.
-
-**Examples:**
-```javascript
-let age: int = 18
-let name: string = "Bruno" 
-let pi: float = 3.14159
-let dynamic_var: dyn = "Dynamic changes" // String
+fn main [
+    # let: (HERE_NAME_OF_VAR) | (HERE_TYPE_OF_VAR);
+    # for example
+    let: is_oak_terrible_syntax | bool;
+    set: is_oak_terrible_syntax | true;
+]
 ```
-
-**TODO**
-- [ ] Variable declaration
-- [ ] Variable usage
-- [ ] Variable assigment
-
-### Function declaration & calls and parameters
-To declare function in Oak you need to use this grammar:
-```rs 
-fn [NAME_OF_FUNC]([ARGS_OF_FUNC]) => [RETURN_TYPE_OF_FUNC] {
-  [BODY_OF_FUNC]
-}
+### Function declaration & calling functions
 ```
-- `NAME_OF_FUNC` For example **get_age_of_alex**, in oak to name a function you need to use snake_case in lower case.
-- `ARGS_OF_FUNC` In arguments first you need to write down type of argument next the name of argument like this **int age** or if you want more arguments then write for example **int age, string name**
-- `RETURN_TYPE_OF_FUNC` Return type is an optional feature not every function need to reutrn something but if you want to return something in your function you need to write something like this after arguments **=> int** or any other [type](#types)
-- `BODY_OF_FUNC` Just an normal body of function
+fn function_to_call [
+    push: "Function has been called";
+    println: ;
+]
 
-**Examples:**
-```rs
-fn get_age_of_alex() => int {
-  return 19
-}
-
-fn main() {
-  println("{}", get_age_of_alex())
-}
+fn main [
+    push: "Before calling function";
+    println: ;
+    call: function_to_call;
+    push: "After calling function";
+    println: ;
+]
 ```
-### Built in functions
-### If & else 
+### If & else
 ### While loops
 ### For loops
 ### Array

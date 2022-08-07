@@ -32,6 +32,7 @@ namespace OakParser {
 class Parser {
 public:
     OakLexer::Lexer* lexer;
+    ProgramAST* program = new ProgramAST();
     Token* next_token;
     Token* current_token;
 

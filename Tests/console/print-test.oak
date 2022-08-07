@@ -1,3 +1,4 @@
-fn main() {
-    println("Hello, oak!")
-}
+fn main() -> int
+    push: "Hello, world!";
+    puts;
+end
