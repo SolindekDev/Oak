@@ -35,18 +35,25 @@ public:
     ProgramAST* program = new ProgramAST();
     Token* next_token;
     Token* current_token;
+    Token* fn_name;
 
     bool is_error_message { 0 };
     bool binary_exp_open { 0 };
+    bool is_fn_open { 0 };
     int index { 0 };
+    int fn_declared_in_program { 0 };
 
     Token* get_next_token();
 
+    Token* get_function_name();
+
     NumberNodeAST* number_search();
 
-    TokenKind search_for_op();
-
     NumberNodeAST* token_to_number_node_ast(Token* &tk);
+
+    NumberNodeAST* parse_number();
+
+    FunctionAST* find_fn_node();
 
     bool is_eof();
 
@@ -54,9 +61,11 @@ public:
 
     bool is_identifier_keyword(std::string value_id);
 
-    void advance();
+    void is_function_name_already_declared(std::string name);
 
-    void parse_math();
+    void append_node(NodeAST* node);
+
+    void advance();
 
     void parse_if();
 
@@ -81,6 +90,12 @@ public:
     void parse_identifier();
 
     void parse_keyword();
+
+    void is_function_open();
+
+    void is_there_brackets_to_open_function();
+
+    void close_function();
 
     void start();
 

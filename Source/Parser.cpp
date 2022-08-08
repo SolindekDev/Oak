@@ -126,18 +126,92 @@ void Parser::parse_namespace() {
     this->is_error_message = true;
     Error::todo("namespace ");
 }
-void Parser::parse_function() {
-    Error::print_error_with_positional_args(
-      UNSUPPORTED_KEYWORD,
-      "this keyword is not supported by oak parser.",
-      create_pos(
-        this->current_token->pos.row,
-        this->current_token->pos.col),
-      this->lexer->filename
-    );
-    this->is_error_message = true;
-    Error::todo("function ");
+
+void Parser::is_function_open() {
+    if (this->is_fn_open) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "you can't open a function in another function.",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+    }
 }
+
+Token* Parser::get_function_name() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type == TokenKind::Identifier)
+        return this->current_token;
+    else {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "after function keyword expected function name.",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+void Parser::is_there_brackets_to_open_function() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type != TokenKind::LeftBracketRectangle) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "expected '[' after function name",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    } else {
+        this->is_fn_open = true;
+    }
+}
+
+void Parser::is_function_name_already_declared(std::string name) {
+    for (auto &node : this->program->body) {
+        if (node->type == "FunctionAST")
+            if (((FunctionAST*)node)->name->value == name) {
+                Error::print_error_with_positional_args(
+                    SYNTAX_ERROR,
+                    "function name is already in use",
+                    create_pos(
+                        this->current_token->pos.row,
+                        this->current_token->pos.col),
+                    this->lexer->filename
+                );
+                Error::todo(" better error when function name is already in use");
+                this->is_error_message = true;
+                exit(1);
+            }
+    }
+}
+
+void Parser::parse_function() {
+    is_function_open();
+    auto _fn_name = get_function_name();
+    is_there_brackets_to_open_function();
+
+    is_function_name_already_declared(_fn_name->value);
+
+    this->program->body.push_back(new FunctionAST(_fn_name));
+    this->fn_name = _fn_name;
+    this->fn_declared_in_program++;
+}
+
 void Parser::parse_const() {
     Error::print_error_with_positional_args(
       UNSUPPORTED_KEYWORD,
@@ -226,6 +300,23 @@ void Parser::parse_keyword() {
         }
 }
 
+FunctionAST* Parser::find_fn_node() {
+    FunctionAST* _return;
+    for (auto &node : this->program->body) {
+        if (node->type == "FunctionAST")
+            if (((FunctionAST*)node)->name->value == this->fn_name->value)
+                _return = (FunctionAST*)node;
+    }
+
+    return _return;
+}
+
+void Parser::append_node(NodeAST* node) {
+    this->is_fn_open == true
+      ? this->find_fn_node()->body.push_back(node)
+      : this->program->body.push_back(node);
+}
+
 bool Parser::is_math_operator() {
     return this->current_token->type == TokenKind::Plus     ||
            this->current_token->type == TokenKind::Minus    ||
@@ -244,60 +335,28 @@ void Parser::parse_identifier() {
     }
 }
 
-NumberNodeAST* Parser::token_to_number_node_ast(Token* &tk) {
-    // TODO: implement hex, octal and binary conversion
-
-    if (tk->value.find('.') != std::string::npos)
-        return new NumberNodeAST(std::stod(tk->value));
-    else if (tk->value.find('o') != std::string::npos)
+NumberNodeAST* Parser::parse_number() {
+    if (this->current_token->value.find('.') != std::string::npos)
+        return new NumberNodeAST(std::stod(this->current_token->value));
+    else if (this->current_token->value.find('o') != std::string::npos)
         Error::todo("octal in math operations ");
-    else if (tk->value.find('x') != std::string::npos)
+    else if (this->current_token->value.find('x') != std::string::npos)
         Error::todo("hexadecimal in math operations ");
-    else if (tk->value.find('b') != std::string::npos)
+    else if (this->current_token->value.find('b') != std::string::npos)
         Error::todo("binary in math operations ");
     else
-        return new NumberNodeAST(std::stoi(tk->value));
+        return new NumberNodeAST(std::stoi(this->current_token->value));
 
     return new NumberNodeAST(0);
 }
 
-TokenKind Parser::search_for_op() {
-    this->index++;
-    this->advance();
-
-    if (this->is_eof())
-        return TokenKind::None;
-    if (!this->is_math_operator()) {
-        Error::print_error_with_positional_args(
-            SYNTAX_ERROR,
-            "Expected an math operator after a number",
-            create_pos(
-                this->current_token->pos.row,
-                this->current_token->pos.col
-            ),
-            this->lexer->filename
-        );
-        this->is_error_message = true;
-        exit(1);
-    }
-
-    return this->current_token->type;
-}
-
-NumberNodeAST* Parser::number_search() {
-    this->index++;
-    this->advance();
-
-    if (this->is_eof())
-        return new NumberNodeAST(0);
-
-    if (this->current_token->type == TokenKind::Int ||
-        this->current_token->type == TokenKind::Float)
-        return token_to_number_node_ast(this->current_token);
+void Parser::close_function() {
+    if (this->is_fn_open)
+        this->is_fn_open = false;
     else {
         Error::print_error_with_positional_args(
             SYNTAX_ERROR,
-            "Expected an number after math operator",
+              "unexpected use of ']'",
             create_pos(
                 this->current_token->pos.row,
                 this->current_token->pos.col
@@ -305,54 +364,6 @@ NumberNodeAST* Parser::number_search() {
             this->lexer->filename
         );
         this->is_error_message = true;
-        exit(1);
-    }
-}
-
-void Parser::parse_math() {
-    if (this->binary_exp_open == true) {
-        if (this->program->body[this->program->body.size() - 1]->type == "MathExpressionNodeAST") {
-            if (is_math_operator()) {
-                auto lhs = new NumberNodeAST(0);
-                auto op = this->current_token->type;
-                auto rhs = this->number_search();
-                auto math_node = new MathNodeAST(lhs, rhs, op);
-
-                math_node->end_to_last = true;
-                std::cout << this->program->body[this->program->body.size() - 1]->nodes.size() << std::endl;
-                this->program->
-                    body[this->program->body.size() - 1]->
-                    nodes.push_back(math_node);
-
-                std::cout << this->program->body[this->program->body.size() - 1]->nodes.size() << std::endl;
-            }
-        } else {
-            Error::print_error_with_positional_args(
-                SYNTAX_ERROR,
-                "Expected math operation before operator or number",
-                create_pos(
-                    this->current_token->pos.row,
-                    this->current_token->pos.col
-                ),
-                this->lexer->filename
-            );
-            this->is_error_message = true;
-            exit(1);
-        }
-    } else {
-        this->binary_exp_open = true;
-        auto math_exp_node = new MathExpressionNodeAST();
-
-        auto lhs = this->token_to_number_node_ast(this->current_token);
-        auto op = this->search_for_op();
-        auto rhs = this->number_search();
-        auto math_node = new MathNodeAST(lhs, rhs, op);
-
-        math_exp_node->nodes.push_back(math_node);
-
-        std::cout << program->body[program->body.size() - 1]->nodes.size() << std::endl;
-        program->body.push_back(math_exp_node);
-        std::cout << program->body[program->body.size() - 1]->nodes.size() << std::endl;
     }
 }
 
@@ -365,14 +376,12 @@ void Parser::start() {
 
         if (this->current_token->type == TokenKind::Identifier)
             this->parse_identifier();
-        else if (this->binary_exp_open == true)
-            this->parse_math();
-        else if (this->current_token->type == TokenKind::Int ||
-                 this->current_token->type == TokenKind::Float)
-            this->parse_math();
+        else if (this->current_token->type == TokenKind::RightBracketRectangle)
+            this->close_function();
     }
 
-    this->program->body[this->program->body.size() - 1]->print();
+    this->find_fn_node()->print();
+    std::cout << this->fn_declared_in_program << std::endl;
 
     if (this->is_error_message == true)
       exit(1);

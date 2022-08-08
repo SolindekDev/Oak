@@ -13,11 +13,8 @@
 class NodeAST {
 public:
     std::string type;
-    std::vector<std::any> nodes;
 
-    virtual void print() {};
-
-    NodeAST() {};
+    NodeAST() { type = "NodeAST"; };
 private:
 };
 
@@ -25,36 +22,20 @@ class NumberNodeAST : public NodeAST {
 public:
     std::variant<int, float, double> number;
 
-    void print();
-
     NumberNodeAST(std::variant<int, float, double> num)
       : number(num) { type = "NumberNodeAST"; }
 private:
 };
 
-class MathNodeAST : public NodeAST {
+class FunctionAST : public NodeAST {
 public:
-    NumberNodeAST* lhs;
-    NumberNodeAST* rhs;
-    TokenKind op;
-    bool end_to_last;
+    Token* name;
+    std::vector<NodeAST*> body;
 
     void print();
 
-    MathNodeAST(NumberNodeAST* _lhs, NumberNodeAST* _rhs, TokenKind _op)
-        : lhs(_lhs)
-        , rhs(_rhs)
-        , op(_op) { type = "MathNodeAST"; }
-private:
-};
-
-class MathExpressionNodeAST : public NodeAST {
-public:
-    std::vector<MathNodeAST*> nodes;
-
-    void print();
-
-    MathExpressionNodeAST() { type = "MathExpressionNodeAST"; };
+    FunctionAST(Token* _name)
+      : name(_name) { type = "FunctionAST"; }
 private:
 };
 
