@@ -1,0 +1,8 @@
+fn foo [
+
+]
+
+fn main [
+    call: println;
+    call: foo;
+]

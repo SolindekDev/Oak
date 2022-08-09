@@ -47,6 +47,10 @@ public:
 
     Token* get_function_name();
 
+    Token* get_value_to_stack();
+
+    FunctionAST* is_function_name_already_declared_node(std::string name);
+
     NumberNodeAST* number_search();
 
     NumberNodeAST* token_to_number_node_ast(Token* &tk);
@@ -55,13 +59,21 @@ public:
 
     FunctionAST* find_fn_node();
 
+    std::string get_function_name_call();
+
     bool is_eof();
 
     bool is_math_operator();
 
     bool is_identifier_keyword(std::string value_id);
 
+    bool is_function_name_already_declared_bool(std::string name);
+
     void is_function_name_already_declared(std::string name);
+
+    void is_fn_name_correct_call(std::string _fn_name);
+
+    void is_colon_next(std::string keyword);
 
     void append_node(NodeAST* node);
 
@@ -85,7 +97,13 @@ public:
 
     void parse_for();
 
+    void parse_pop();
+
+    void parse_push();
+
     void parse_class();
+
+    void parse_call();
 
     void parse_identifier();
 
@@ -96,6 +114,14 @@ public:
     void is_there_brackets_to_open_function();
 
     void close_function();
+
+    void is_token_in_function();
+
+    void is_semi_colon_next();
+
+    void init_builtin_functions();
+
+    void print_all_functions();
 
     void start();
 

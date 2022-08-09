@@ -169,6 +169,10 @@ TokenKind Lexer::detect_char(char next_char) {
         case '}':
             this->bracket_curly_opened = false;
             return TokenKind::RightCurlyBrackets; // }
+        case ':':
+            return TokenKind::Colon; // :
+        case ';':
+            return TokenKind::Colon; // ;
         case '?': return TokenKind::QuestionMark; // ?
         default: return TokenKind::None; // none
     }
@@ -322,17 +326,17 @@ void Lexer::advance() {
 
 void Lexer::is_brackets_ends() {
     if (this->paren_opened) {
-      Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
+      Error::print_error(SYNTAX_ERROR, "You didn't close paren brackets with ')'");
       this->is_error_message = true;
     }
 
     if (this->bracket_curly_opened) {
-      Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
+      Error::print_error(SYNTAX_ERROR, "You didn't close curly brackets with '}'");
       this->is_error_message = true;
     }
 
     if (this->bracket_rectangle_opened) {
-      Error::print_error(SYNTAX_ERROR, "You didn't close string with '\"'");
+      Error::print_error(SYNTAX_ERROR, "You didn't close rectangle brackets with ']'");
       this->is_error_message = true;
     }
 }

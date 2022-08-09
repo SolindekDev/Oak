@@ -15,3 +15,15 @@ void FunctionAST::print() {
               << this->body.size()
               << std::endl;
 }
+
+void PushStatementAST::print() {
+    std::cout << "Value to stack: "
+              << this->value_to_stack
+              << std::endl;
+}
+
+void CallFunctionAST::print() {
+    std::cout << "Function name to call: "
+              << this->function_name
+              << std::endl;
+}

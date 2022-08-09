@@ -39,6 +39,30 @@ public:
 private:
 };
 
+class PushStatementAST : public NodeAST {
+public:
+    Token* value_to_stack;
+
+    void print();
+
+    PushStatementAST(Token* &_value_to_stack)
+      : value_to_stack(_value_to_stack) { type = "PushStatementAST"; }
+private:
+};
+
+class CallFunctionAST : public NodeAST {
+public:
+    std::string function_name;
+    FunctionAST* function_call;
+
+    void print();
+
+    CallFunctionAST(std::string _function_name, FunctionAST* _function_call)
+        : function_name(_function_name)
+        , function_call(_function_call) { type = "CallFunctionAST"; }
+private:
+};
+
 class ProgramAST {
 public:
     std::string type = "Program";

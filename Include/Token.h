@@ -78,6 +78,10 @@ enum TokenKind {
     RightCurlyBrackets,
     // ?
     QuestionMark,
+    // :
+    Colon,
+    // ;
+    SemiColon,
     // None
     None,
 };

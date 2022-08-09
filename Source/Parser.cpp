@@ -10,17 +10,26 @@
 #include <AST.h>
 #include <Libs.h>
 
-const std::string Oak_Keywords[10] = {
-    "fn",
-    "if",
-    "elif",
-    "else",
-    "let",
-    "const",
-    "while",
-    "for",
-    "class",
-    "namespace",
+const std::string Oak_Keywords[13] = {
+    "fn", // DONE
+    "if", // TODO
+    "elif", // TODO
+    "else", // TODO
+    "let", // TODO
+    "const", // TODO
+    "while", // TODO
+    "for", // TODO
+    "class", // TODO
+    "call", // DONE
+    "push", // TODO: now
+    "pop", // TODO: now
+    "namespace", // TODO
+};
+
+Token* Oak_Builtin_Functions[3] = {
+    new Token("println", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
+    new Token("print", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
+    new Token("puts", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
 };
 
 const std::string Oak_Keyword_Function  = "fn";
@@ -32,6 +41,9 @@ const std::string Oak_Keyword_Const     = "const";
 const std::string Oak_Keyword_While     = "while";
 const std::string Oak_Keyword_For       = "for";
 const std::string Oak_Keyword_Class     = "class";
+const std::string Oak_Keyword_Call      = "call";
+const std::string Oak_Keyword_Push      = "push";
+const std::string Oak_Keyword_Pop       = "pop";
 const std::string Oak_Keyword_Namespace = "namespace";
 
 const Precedences Oak_Precedences[5] = {
@@ -181,19 +193,41 @@ void Parser::is_there_brackets_to_open_function() {
     }
 }
 
+bool Parser::is_function_name_already_declared_bool(std::string name) {
+    for (auto &node : this->program->body) {
+        if (node->type == "FunctionAST")
+            if (((FunctionAST*)node)->name->value == name)
+                return true;
+    }
+
+    return false;
+}
+
+FunctionAST* Parser::is_function_name_already_declared_node(std::string name) {
+    FunctionAST* fn_ast;
+    for (auto &node : this->program->body) {
+        if (node->type == "FunctionAST")
+            if (((FunctionAST*)node)->name->value == name)
+                fn_ast = ((FunctionAST*)node);
+    }
+    return fn_ast;
+}
+
 void Parser::is_function_name_already_declared(std::string name) {
     for (auto &node : this->program->body) {
         if (node->type == "FunctionAST")
             if (((FunctionAST*)node)->name->value == name) {
+                std::ostringstream ss;
+                ss << "'" << name << "' " << "function name is already in use";
+
                 Error::print_error_with_positional_args(
                     SYNTAX_ERROR,
-                    "function name is already in use",
+                    ss.str(),
                     create_pos(
                         this->current_token->pos.row,
                         this->current_token->pos.col),
                     this->lexer->filename
                 );
-                Error::todo(" better error when function name is already in use");
                 this->is_error_message = true;
                 exit(1);
             }
@@ -265,6 +299,151 @@ void Parser::parse_class() {
     Error::todo("classes ");
 }
 
+void Parser::is_token_in_function() {
+    if (this->is_fn_open != true) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "this token can be use only in function body",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+    }
+}
+
+void Parser::is_colon_next(std::string keyword) {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type != TokenKind::Colon) {
+        std::ostringstream ss;
+        ss << "expected ':' after " << keyword << " keyword";
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            ss.str(),
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+std::string Parser::get_function_name_call() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type == TokenKind::Identifier)
+        return this->current_token->value;
+    else {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "after call keyword expected function name to call.",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+void Parser::is_semi_colon_next() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type != TokenKind::Colon) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "expected ';' after function name to call",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+void Parser::is_fn_name_correct_call(std::string _fn_name) {
+    if (!is_function_name_already_declared_bool(_fn_name)) {
+        std::ostringstream ss;
+        ss << "'" << _fn_name << "' " << "function to call is not declared";
+
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            ss.str(),
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+void Parser::parse_call() {
+    is_token_in_function();
+    is_colon_next("call");
+    auto _fn_name = get_function_name_call();
+    is_fn_name_correct_call(_fn_name);
+    is_semi_colon_next();
+
+    auto call_node = new CallFunctionAST(
+      _fn_name, is_function_name_already_declared_node(_fn_name));
+    append_node(call_node);
+}
+
+Token* Parser::get_value_to_stack() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type == TokenKind::Identifier) {
+        // TODO: push variable value
+        Error::todo("push variable value ");
+        exit(1);
+    } else if (
+      this->current_token->type == TokenKind::Int    ||
+      this->current_token->type == TokenKind::String ||
+      this->current_token->type == TokenKind::Float){
+        return this->current_token;
+    } else {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "unexpected type to push, expected int, string, float or variable name",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+void Parser::parse_push() {
+    is_token_in_function();
+    is_colon_next("push");
+    auto value_to_stack = get_value_to_stack();
+    is_semi_colon_next();
+
+    auto push_node = new PushStatementAST(value_to_stack);
+    append_node(push_node);
+}
+
+void Parser::parse_pop() {
+    is_token_in_function();
+    is_colon_next("pop");
+    Error::todo("pop keyword ");
+}
+
 void Parser::parse_keyword() {
         if (this->current_token->value == Oak_Keyword_If)
             this->parse_if();
@@ -284,6 +463,12 @@ void Parser::parse_keyword() {
             this->parse_while();
         else if (this->current_token->value == Oak_Keyword_For)
             this->parse_for();
+        else if (this->current_token->value == Oak_Keyword_Call)
+            this->parse_call();
+        else if (this->current_token->value == Oak_Keyword_Push)
+            this->parse_push();
+        else if (this->current_token->value == Oak_Keyword_Pop)
+            this->parse_pop();
         else if (this->current_token->value == Oak_Keyword_Class)
             this->parse_class();
         else {
@@ -331,7 +516,18 @@ void Parser::parse_identifier() {
     if (is_keyword) {
         this->parse_keyword();
     } else {
-        Error::todo("check is identifier function or a variable ");
+        std::ostringstream ss;
+        ss << "unexpected use of '" << this->current_token->value << "' identifier";
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            ss.str(),
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col
+            ),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
     }
 }
 
@@ -367,7 +563,29 @@ void Parser::close_function() {
     }
 }
 
+void Parser::init_builtin_functions() {
+    for (auto fn : Oak_Builtin_Functions) {
+        this->program->body.push_back(
+          new FunctionAST(fn));
+    }
+}
+
+void Parser::print_all_functions() {
+    for (auto &node : this->program->body) {
+        if (node->type == "FunctionAST") {
+            std::cout << "Function name: "
+                      << ((FunctionAST*)node)->name->value
+                      << " | Function address: 0x"
+                      << &node
+                      << " | Function body size: "
+                      << ((FunctionAST*)node)->body.size()
+                      << std::endl;
+        }
+    }
+}
+
 void Parser::start() {
+    this->init_builtin_functions();
     for (this->index = 0; this->index < this->lexer->tokens.size(); this->index++) {
         this->advance();
 
@@ -380,8 +598,7 @@ void Parser::start() {
             this->close_function();
     }
 
-    this->find_fn_node()->print();
-    std::cout << this->fn_declared_in_program << std::endl;
+    this->print_all_functions();
 
     if (this->is_error_message == true)
       exit(1);

@@ -30,7 +30,7 @@ make && ./Build/oak --version
 ```
 fn main [
     push: "Hello, World!";
-    println: ;
+    call: println;
 ]
 ```
 ### Stack
@@ -74,7 +74,7 @@ fn main [
     # Push this string to stack
     # and after it print it out
     push: text_to_print;
-    println: ;
+    call: println;
 ]
 ```
 ### Variables declaration & usage
@@ -90,15 +90,31 @@ fn main [
 ```
 fn function_to_call [
     push: "Function has been called";
-    println: ;
+    call: println;
 ]
 
 fn main [
     push: "Before calling function";
-    println: ;
+    call: println;
     call: function_to_call;
     push: "After calling function";
-    println: ;
+    call: println;
+]
+```
+### Importing files
+**main.oak**
+```
+@import "./function.oak"
+
+fn main [
+    call: function_from_import;
+]
+```
+**function.oak**
+```
+fn function_from_import [
+    push: "Hello";
+    call: println;
 ]
 ```
 ### If & else
