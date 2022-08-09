@@ -22,6 +22,7 @@ public:
 
     void println_implementation();
 
+<<<<<<< HEAD
     void push_statement_implementation(PushStatementAST* node);
 
     void call_function_implementation(CallFunctionAST* node);
@@ -30,6 +31,8 @@ public:
 
     void execute_main(FunctionAST* fn);
 
+=======
+>>>>>>> 1d0324510ff6cf9ced96c3d2f99d440d2ecff3f7
     void start();
 
     Eval(ProgramAST* eprogram)
