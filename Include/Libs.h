@@ -13,7 +13,6 @@
 #include <vector>
 #include <cstring>
 #include <sstream>
-#include <string>
 #include <fstream>
 #include <cmath>
 #include <cstdlib>
@@ -24,5 +23,8 @@
 #include <any>
 #include <optional>
 #include <ctype.h>
+#include <regex>
+#include <string>
+#include <algorithm>
 
 #endif /* __OAK__Libs__H__ */

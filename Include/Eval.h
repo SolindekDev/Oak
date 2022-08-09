@@ -28,7 +28,7 @@ public:
 
     void find_main();
 
-    void execute_main(FunctionAST* fn);
+    void execute_function(FunctionAST* fn);
 
     void start();
 

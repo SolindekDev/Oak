@@ -9,6 +9,7 @@
 #include <Token.h>
 #include <Error.h>
 #include <AST.h>
+#include <Utils.h>
 #include <Libs.h>
 
 namespace OakEval {
@@ -17,13 +18,32 @@ std::vector<std::variant<int, float, std::string, double>> stack;
 
 void Eval::print_implementation() {
     std::visit([](const auto &x) {
-        std::cout << x;
+        try {
+            auto get_str = std::get<std::string>(stack.at(stack.size() - 1));
+            auto replaced = Utils::replace_all(get_str, std::string("\\n"), std::string("\n"));
+            replaced = Utils::replace_all(replaced, std::string("\\t"), std::string("\t"));
+            replaced = Utils::replace_all(replaced, std::string("\\\\"), std::string("\\"));
+            std::cout << replaced;
+        } catch (const std::bad_variant_access& ex) {
+            std::cout << x;
+        }
     }, stack.at(stack.size() - 1));
 }
 
 void Eval::println_implementation() {
     std::visit([](const auto &x) {
-        std::cout << x << std::endl;
+        try {
+            // auto get_str = std::get<std::string>(stack.at(stack.size() - 1));
+            // auto to_prt_str = std::regex_replace(get_str, std::regex("\\n"), std::endl);
+            // std::cout << to_prt_str << std::endl;
+            auto get_str = std::get<std::string>(stack.at(stack.size() - 1));
+            auto replaced = Utils::replace_all(get_str, std::string("\\n"), std::string("\n"));
+            replaced = Utils::replace_all(replaced, std::string("\\t"), std::string("\t"));
+            replaced = Utils::replace_all(replaced, std::string("\\\\"), std::string("\\"));
+            std::cout << replaced << std::endl;
+        } catch (const std::bad_variant_access& ex) {
+            std::cout << x << std::endl;
+        }
     }, stack.at(stack.size() - 1));
 }
 
@@ -51,11 +71,11 @@ void Eval::call_function_implementation(CallFunctionAST* node) {
     } else if (node->function_name == "println") {
         this->println_implementation();
     } else {
-        Error::todo("eval: execut not builtin function ");
+        execute_function(node->function_call);
     }
 }
 
-void Eval::execute_main(FunctionAST* fn) {
+void Eval::execute_function(FunctionAST* fn) {
     for (auto& node : fn->body) {
         if (node->type == "PushStatementAST")
             push_statement_implementation((PushStatementAST*)node);
@@ -68,7 +88,7 @@ void Eval::find_main() {
     for (auto& node : this->program->body) {
         if (node->type == "FunctionAST") {
             if (((FunctionAST*)node)->name->value == "main")
-                this->execute_main((FunctionAST*)node);
+                this->execute_function((FunctionAST*)node);
         } else
             Error::todo("eval: node evaluation ");
     }

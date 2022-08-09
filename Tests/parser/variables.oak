@@ -1,0 +1,4 @@
+fn main [
+    push: "Hello! Define variable var1 with value 50";
+    call: println;
+]
