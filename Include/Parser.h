@@ -49,6 +49,8 @@ public:
 
     Token* get_value_to_stack();
 
+    Token* get_variable_value();
+
     FunctionAST* is_function_name_already_declared_node(std::string name);
 
     NumberNodeAST* number_search();
@@ -60,6 +62,8 @@ public:
     FunctionAST* find_fn_node();
 
     std::string get_function_name_call();
+
+    std::string get_variable_name();
 
     bool is_eof();
 
@@ -117,7 +121,9 @@ public:
 
     void is_token_in_function();
 
-    void is_semi_colon_next();
+    void is_semi_colon_next(std::string keyword);
+
+    void is_seperator_here();
 
     void init_builtin_functions();
 

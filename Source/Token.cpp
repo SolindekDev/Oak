@@ -118,8 +118,8 @@ std::string type_string_(TokenKind kind) {
         case TokenKind::LessThanOrEquals:
             return (std::string)"LessThanOrEquals";
             break;
-        case TokenKind::Or:
-            return (std::string)"Or";
+        case TokenKind::Seperator:
+            return (std::string)"Seperator";
             break;
         case TokenKind::And:
             return (std::string)"And";

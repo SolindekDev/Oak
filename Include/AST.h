@@ -58,8 +58,27 @@ public:
     void print();
 
     CallFunctionAST(std::string _function_name, FunctionAST* _function_call)
-        : function_name(_function_name)
-        , function_call(_function_call) { type = "CallFunctionAST"; }
+      : function_name(_function_name)
+      , function_call(_function_call) { type = "CallFunctionAST"; }
+private:
+};
+
+class VariableDeclarationAST : public NodeAST {
+public:
+    std::string variable_name;
+    std::string variable_value;
+    TokenKind variable_type;
+    bool is_constant;
+    FunctionAST* in_function;
+
+    void print();
+
+    VariableDeclarationAST(std::string _variable_name, std::string _variable_value, TokenKind _variable_type, bool _is_constant, FunctionAST* _in_function)
+      : variable_name(_variable_name)
+      , variable_value(_variable_value)
+      , variable_type(_variable_type)
+      , is_constant(_is_constant)
+      , in_function(_in_function) { type = "VariableDeclarationAST"; }
 private:
 };
 

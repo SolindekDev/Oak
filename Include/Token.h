@@ -62,8 +62,8 @@ enum TokenKind {
     BiggerThanOrEquals,
     // >=
     LessThanOrEquals,
-    // ||
-    Or,
+    // |
+    Seperator,
     // &
     And,
     // !

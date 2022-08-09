@@ -90,6 +90,7 @@ void Parser::parse_if() {
     this->is_error_message = true;
     Error::todo("if ");
 }
+
 void Parser::parse_elif() {
     Error::print_error_with_positional_args(
       UNSUPPORTED_KEYWORD,
@@ -102,6 +103,7 @@ void Parser::parse_elif() {
     this->is_error_message = true;
     Error::todo("elif ");
 }
+
 void Parser::parse_else() {
     Error::print_error_with_positional_args(
       UNSUPPORTED_KEYWORD,
@@ -114,18 +116,7 @@ void Parser::parse_else() {
     this->is_error_message = true;
     Error::todo("else ");
 }
-void Parser::parse_let() {
-    Error::print_error_with_positional_args(
-      UNSUPPORTED_KEYWORD,
-      "this keyword is not supported by oak parser.",
-      create_pos(
-        this->current_token->pos.row,
-        this->current_token->pos.col),
-      this->lexer->filename
-    );
-    this->is_error_message = true;
-    Error::todo("let ");
-}
+
 void Parser::parse_namespace() {
     Error::print_error_with_positional_args(
       UNSUPPORTED_KEYWORD,
@@ -214,6 +205,21 @@ FunctionAST* Parser::is_function_name_already_declared_node(std::string name) {
 }
 
 void Parser::is_function_name_already_declared(std::string name) {
+    if (is_identifier_keyword(name)) {
+        std::ostringstream ss;
+        ss << "unexpected use of '" << name << "' keyword";
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            ss.str(),
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+
     for (auto &node : this->program->body) {
         if (node->type == "FunctionAST")
             if (((FunctionAST*)node)->name->value == name) {
@@ -353,14 +359,16 @@ std::string Parser::get_function_name_call() {
     }
 }
 
-void Parser::is_semi_colon_next() {
+void Parser::is_semi_colon_next(std::string keyword) {
     this->index++;
     this->advance();
 
     if (this->current_token->type != TokenKind::Colon) {
+        std::ostringstream ss;
+        ss << "expected ';' after " << keyword;
         Error::print_error_with_positional_args(
             SYNTAX_ERROR,
-            "expected ';' after function name to call",
+            ss.str(),
             create_pos(
                 this->current_token->pos.row,
                 this->current_token->pos.col),
@@ -387,6 +395,21 @@ void Parser::is_fn_name_correct_call(std::string _fn_name) {
         this->is_error_message = true;
         exit(1);
     }
+
+    if (is_identifier_keyword(_fn_name)) {
+        std::ostringstream ss;
+        ss << "unexpected use of '" << this->current_token->value << "' keyword";
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            ss.str(),
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
 }
 
 void Parser::parse_call() {
@@ -394,11 +417,110 @@ void Parser::parse_call() {
     is_colon_next("call");
     auto _fn_name = get_function_name_call();
     is_fn_name_correct_call(_fn_name);
-    is_semi_colon_next();
+    is_semi_colon_next("function name to call");
 
     auto call_node = new CallFunctionAST(
       _fn_name, is_function_name_already_declared_node(_fn_name));
     append_node(call_node);
+}
+
+
+std::string Parser::get_variable_name() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type != TokenKind::Identifier) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "expected variable name after variable keyword and colon",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+
+    if (is_identifier_keyword(this->current_token->value)) {
+        std::ostringstream ss;
+        ss << "unexpected use of '" << this->current_token->value << "' keyword";
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            ss.str(),
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+
+    return this->current_token->value;
+}
+
+Token* Parser::get_variable_value() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type == TokenKind::Identifier) {
+        // TODO: variable
+        Error::todo("variable value to new variable ");
+        exit(1);
+    } else if (
+      this->current_token->type == TokenKind::Int    ||
+      this->current_token->type == TokenKind::String ||
+      this->current_token->type == TokenKind::Float){
+        return this->current_token;
+    } else {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "unexpected type to variable value, expected int, string, float or variable name for value",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+void Parser::is_seperator_here() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type != TokenKind::Seperator) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "expected '|' after variable name to seperate name from value",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
+void Parser::is_var_defined() {
+  
+}
+
+void Parser::parse_let() {
+    is_token_in_function();
+    is_colon_next("let");
+    auto _var_name = get_variable_name();
+    is_seperator_here();
+    auto _var_value = get_variable_value();
+    is_semi_colon_next("variable value");
+
+    auto var_node = new VariableDeclarationAST(
+      _var_name, _var_value->value,
+      _var_value->type, false, find_fn_node());
+    append_node(var_node);
 }
 
 Token* Parser::get_value_to_stack() {
@@ -432,7 +554,7 @@ void Parser::parse_push() {
     is_token_in_function();
     is_colon_next("push");
     auto value_to_stack = get_value_to_stack();
-    is_semi_colon_next();
+    is_semi_colon_next("value to push");
 
     auto push_node = new PushStatementAST(value_to_stack);
     append_node(push_node);

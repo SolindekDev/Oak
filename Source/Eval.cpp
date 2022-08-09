@@ -33,9 +33,6 @@ void Eval::print_implementation() {
 void Eval::println_implementation() {
     std::visit([](const auto &x) {
         try {
-            // auto get_str = std::get<std::string>(stack.at(stack.size() - 1));
-            // auto to_prt_str = std::regex_replace(get_str, std::regex("\\n"), std::endl);
-            // std::cout << to_prt_str << std::endl;
             auto get_str = std::get<std::string>(stack.at(stack.size() - 1));
             auto replaced = Utils::replace_all(get_str, std::string("\\n"), std::string("\n"));
             replaced = Utils::replace_all(replaced, std::string("\\t"), std::string("\t"));

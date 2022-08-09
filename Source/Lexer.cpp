@@ -155,7 +155,7 @@ TokenKind Lexer::detect_char(char next_char) {
                 return TokenKind::NotEquals;
             }
             return TokenKind::Bang; // =
-        case '|': return TokenKind::Or;
+        case '|': return TokenKind::Seperator;
         case '&': return TokenKind::And;
         case '[':
             this->bracket_rectangle_opened = true;
