@@ -18,6 +18,10 @@ class Eval {
 public:
     ProgramAST* program;
 
+    void print_implementation();
+
+    void println_implementation();
+
     void start();
 
     Eval(ProgramAST* eprogram)
