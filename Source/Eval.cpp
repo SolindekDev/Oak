@@ -13,7 +13,6 @@
 
 namespace OakEval {
 
-<<<<<<< HEAD
 std::vector<std::variant<int, float, std::string, double>> stack;
 
 void Eval::print_implementation() {
@@ -78,18 +77,6 @@ void Eval::find_main() {
 void Eval::start() {
     // Search for main function and start eval it
     find_main();
-=======
-void Eval::print_implementation(std::string value) {
-    std::cout << value;
-}
-
-void Eval::println_implementation(std::string value) {
-    std::cout << value << std::endl;
-}
-
-void Eval::start() {
-    // TODO
->>>>>>> 1d0324510ff6cf9ced96c3d2f99d440d2ecff3f7
 }
 
 };
