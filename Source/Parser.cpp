@@ -598,7 +598,7 @@ void Parser::start() {
             this->close_function();
     }
 
-    this->print_all_functions();
+    // this->print_all_functions();
 
     if (this->is_error_message == true)
       exit(1);

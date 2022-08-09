@@ -12,6 +12,7 @@
 #include <Token.h>
 #include <Lexer.h>
 #include <Parser.h>
+#include <Eval.h>
 #include <Libs.h>
 
 // Usage, this function print out usage of oak compiler
@@ -133,6 +134,10 @@ int main(int argc, char **argv) {
                 // Create parser class
                 auto parser = new OakParser::Parser(lexer);
                 parser->start();
+
+                // Create eval class
+                auto eval = new OakEval::Eval(parser->program);
+                eval->start();
             } else
                 Error::print_error_with_exit(FILE_ERROR, "File that you provided do not exists"); // The file do not exists.
         }

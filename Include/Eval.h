@@ -18,6 +18,18 @@ class Eval {
 public:
     ProgramAST* program;
 
+    void print_implementation();
+
+    void println_implementation();
+
+    void push_statement_implementation(PushStatementAST* node);
+
+    void call_function_implementation(CallFunctionAST* node);
+
+    void find_main();
+
+    void execute_main(FunctionAST* fn);
+
     void start();
 
     Eval(ProgramAST* eprogram)

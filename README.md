@@ -11,6 +11,9 @@ Oak programming language is a simple, fast, interpreter programming language for
 - Parser
 - Codegen
 - Add runtime libraries
+## Screenshots
+### First Hello, World ever writted in Oak
+![First Hello, World!](Screenshots/first_hello_world.png)
 ## Build & Usage
 To build oak compiler you need to write down this commands:
 ```bash

@@ -19,6 +19,7 @@
 #define UNSUPPORTED_CHAR (std::string)"UnsupportedCharError"
 #define UNSUPPORTED_KEYWORD (std::string)"UnsupportedKeywordError"
 #define COMPILER_ERROR (std::string)"CompilerError"
+#define RUNTIME_ERROR (std::string)"RuntimeError"
 
 namespace Error {
 
