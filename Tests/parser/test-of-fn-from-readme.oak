@@ -1,0 +1,12 @@
+fn function_to_call [
+    push: "Function has been called";
+    call: println;
+]
+
+fn main [
+    push: "Before calling function";
+    call: println;
+    call: function_to_call;
+    push: "After calling function";
+    call: println;
+]

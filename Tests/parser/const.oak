@@ -1,0 +1,9 @@
+const: RAND_MAX | 32767;      # <stdlib.h>
+const: MB_CUR_MAX | 1;        # <stdlib.h>
+const: EXIT_SUCCESS | 0;      # <stdlib.h>
+const: EXIT_FAILURE | 1;      # <stdlib.h>
+const: CLOCKS_PER_SEC | 1000; # <time.h>
+
+fn main [
+
+]

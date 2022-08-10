@@ -123,6 +123,8 @@ public:
 
     void is_there_brackets_to_open_function();
 
+    void is_token_outside_function();
+
     void close_function();
 
     void is_token_in_function();

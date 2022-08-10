@@ -39,7 +39,13 @@ public:
 
     void println_implementation();
 
-    void push_statement_implementation(PushStatementAST* node);
+    void exit_implementation();
+
+    void sleep_implementation();
+
+    void system_implementation();
+
+    void push_statement_implementation(PushStatementAST* node, FunctionAST* fn);
 
     void call_function_implementation(CallFunctionAST* node);
 
@@ -49,7 +55,7 @@ public:
 
     void execute_function(FunctionAST* fn);
 
-    void sleep_implementation();
+    void is_stack_empty(std::string fn);
 
     void start();
 

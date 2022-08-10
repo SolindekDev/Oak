@@ -21,16 +21,17 @@ const std::string Oak_Keywords[13] = {
     "for", // TODO
     "class", // TODO
     "call", // DONE
-    "push", // TODO: now
+    "push", // DONE
     "pop", // TODO: now
     "namespace", // TODO
 };
 
-Token* Oak_Builtin_Functions[4] = {
+Token* Oak_Builtin_Functions[5] = {
     new Token("println", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
     new Token("print", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
     new Token("puts", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
     new Token("sleep", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
+    new Token("exit", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
 };
 
 const std::string Oak_Keyword_Function  = "fn";
@@ -253,18 +254,35 @@ void Parser::parse_function() {
     this->fn_declared_in_program++;
 }
 
+void Parser::is_token_in_function() {
+    if (this->is_fn_open != true) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "this token can be use only in function body",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+    }
+}
+
 void Parser::parse_const() {
-    Error::print_error_with_positional_args(
-      UNSUPPORTED_KEYWORD,
-      "this keyword is not supported by oak parser.",
-      create_pos(
-        this->current_token->pos.row,
-        this->current_token->pos.col),
-      this->lexer->filename
-    );
-    this->is_error_message = true;
-    Error::todo("const ");
-    std::cout << this->current_token->value << std::endl;
+    is_token_outside_function();
+    is_colon_next("const");
+    auto _var_name = get_variable_name();
+    is_seperator_here();
+    auto _var_value = get_variable_value();
+    is_semi_colon_next("variable value");
+    is_var_defined_void(_var_name);
+
+    auto var_node = new VariableDeclarationAST(
+      _var_name, _var_value->value,
+      _var_value->type, true,
+      is_function_name_already_declared_node(fn_name->value));
+    append_node(var_node);
+    std::cout << _var_name << std::endl;
 }
 
 void Parser::parse_while() {
@@ -304,20 +322,6 @@ void Parser::parse_class() {
     );
     this->is_error_message = true;
     Error::todo("classes ");
-}
-
-void Parser::is_token_in_function() {
-    if (this->is_fn_open != true) {
-        Error::print_error_with_positional_args(
-            SYNTAX_ERROR,
-            "this token can be use only in function body",
-            create_pos(
-                this->current_token->pos.row,
-                this->current_token->pos.col),
-            this->lexer->filename
-        );
-        this->is_error_message = true;
-    }
 }
 
 void Parser::is_colon_next(std::string keyword) {
@@ -410,6 +414,20 @@ void Parser::is_fn_name_correct_call(std::string _fn_name) {
         );
         this->is_error_message = true;
         exit(1);
+    }
+}
+
+void Parser::is_token_outside_function() {
+    if (this->is_fn_open == true) {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "this token can be use only outside function body",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
     }
 }
 
@@ -529,13 +547,22 @@ void Parser::is_seperator_here() {
 }
 
 bool Parser::is_var_defined(std::string var_name) {
-    auto ac_function = is_function_name_already_declared_node(fn_name->value);
-
-    for (auto& node : ac_function->body) {
-        if (node->type == "VariableDeclarationAST") {
+    if (is_fn_open == true) {
+        auto ac_function = is_function_name_already_declared_node(fn_name->value);
+        for (auto& node : ac_function->body) {
+          if (node->type == "VariableDeclarationAST") {
             if (((VariableDeclarationAST*)node)->variable_name == var_name) {
-                return true;
+              return true;
             }
+          }
+        }
+    } else {
+        for (auto& outside_node : this->program->body) {
+          if (outside_node->type == "VariableDeclarationAST") {
+            if (((VariableDeclarationAST*)outside_node)->variable_name == var_name) {
+              return true;
+            }
+          }
         }
     }
 
@@ -594,9 +621,7 @@ Token* Parser::get_value_to_stack() {
     this->advance();
 
     if (this->current_token->type == TokenKind::Identifier) {
-        // TODO: push variable value
-        Error::todo("push variable value ");
-        exit(1);
+        return new Token(this->current_token->value, this->lexer->filename, TokenKind::None, create_pos(0,0));
     } else if (
       this->current_token->type == TokenKind::Int    ||
       this->current_token->type == TokenKind::String ||
@@ -622,8 +647,13 @@ void Parser::parse_push() {
     auto value_to_stack = get_value_to_stack();
     is_semi_colon_next("value to push");
 
-    auto push_node = new PushStatementAST(value_to_stack);
-    append_node(push_node);
+    if (value_to_stack->type == TokenKind::None) {
+        auto push_node = new PushStatementAST(value_to_stack, true, value_to_stack->value);
+        append_node(push_node);
+    } else {
+        auto push_node = new PushStatementAST(value_to_stack, false, "");
+        append_node(push_node);
+    }
 }
 
 void Parser::parse_pop() {

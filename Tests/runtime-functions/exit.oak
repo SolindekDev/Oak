@@ -1,0 +1,4 @@
+fn main [
+    push: 2;
+    call: exit;
+]
