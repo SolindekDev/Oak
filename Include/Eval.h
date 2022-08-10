@@ -14,6 +14,23 @@
 
 namespace OakEval {
 
+class VariableEval {
+public:
+    std::string name;
+    std::variant<int, double, float, std::string> value;
+    TokenKind type;
+    FunctionAST* func;
+
+    void print();
+
+    VariableEval(std::string _name, std::variant<int, double, float, std::string> _value, TokenKind _type, FunctionAST* _func)
+      : name(_name)
+      , value(_value)
+      , type(_type)
+      , func(_func) {}
+private:
+};
+
 class Eval {
 public:
     ProgramAST* program;
@@ -26,9 +43,13 @@ public:
 
     void call_function_implementation(CallFunctionAST* node);
 
+    void variable_declaration_implementation(VariableDeclarationAST* node);
+
     void find_main();
 
     void execute_function(FunctionAST* fn);
+
+    void sleep_implementation();
 
     void start();
 

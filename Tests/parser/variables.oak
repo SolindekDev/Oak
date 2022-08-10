@@ -1,6 +1,7 @@
 #const: age | "16";
 
 fn main [
-    let: pet_kind | 10;
-    #const: name_of_pet | "Carlos";
+    let: pet_kind | "Capybara";
+    let: name_of_pet | "Carlos";
+    let: again_name_of_pet | name_of_pet;
 ]

@@ -1,0 +1,4 @@
+fn main [
+    push: "Hi!";
+    call: print;
+]

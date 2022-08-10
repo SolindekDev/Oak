@@ -18,4 +18,9 @@ std::string replace_all(std::string str, const std::string& from, const std::str
     return str;
 }
 
+void sleep(unsigned int mseconds) {
+    clock_t goal = mseconds + clock();
+    while (goal > clock());
+}
+
 };

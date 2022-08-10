@@ -15,6 +15,7 @@
 namespace OakEval {
 
 std::vector<std::variant<int, float, std::string, double>> stack;
+std::vector<VariableEval*> variables;
 
 void Eval::print_implementation() {
     std::visit([](const auto &x) {
@@ -28,6 +29,20 @@ void Eval::print_implementation() {
             std::cout << x;
         }
     }, stack.at(stack.size() - 1));
+}
+
+void Eval::sleep_implementation() {
+    try {
+        auto get_int = std::get<int>(stack.at(stack.size() - 1));
+        Utils::sleep(get_int);
+    } catch (const std::bad_variant_access& ex) {
+        try {
+            auto get_double = std::get<double>(stack.at(stack.size() - 1));
+            Utils::sleep((int)get_double);
+        } catch (const std::bad_variant_access& ex) {
+            Error::print_error(RUNTIME_ERROR, "you didn't provide time to sleep");
+        }
+    }
 }
 
 void Eval::println_implementation() {
@@ -67,9 +82,27 @@ void Eval::call_function_implementation(CallFunctionAST* node) {
         this->print_implementation();
     } else if (node->function_name == "println") {
         this->println_implementation();
+    } else if (node->function_name == "sleep") {
+        this->sleep_implementation();
     } else {
         execute_function(node->function_call);
     }
+}
+
+void Eval::variable_declaration_implementation(VariableDeclarationAST* node) {
+    auto variable = new VariableEval(
+        node->variable_name,
+        node->variable_value,
+        node->variable_type,
+        node->in_function
+    );
+
+    variables.push_back(variable);
+    std::cout << variable->name << " | ";
+    std::visit([](const auto &x) {
+        std::cout << x;
+    }, variable->value);
+    std::cout << std::endl;
 }
 
 void Eval::execute_function(FunctionAST* fn) {
@@ -78,6 +111,8 @@ void Eval::execute_function(FunctionAST* fn) {
             push_statement_implementation((PushStatementAST*)node);
         else if (node->type == "CallFunctionAST")
             call_function_implementation((CallFunctionAST*)node);
+        else if (node->type == "VariableDeclarationAST")
+            variable_declaration_implementation((VariableDeclarationAST*)node);
     }
 }
 
@@ -87,7 +122,7 @@ void Eval::find_main() {
             if (((FunctionAST*)node)->name->value == "main")
                 this->execute_function((FunctionAST*)node);
         } else
-            Error::todo("eval: node evaluation ");
+            Error::todo("eval: node evaluation outside functions ");
     }
 }
 

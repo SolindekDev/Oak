@@ -26,10 +26,11 @@ const std::string Oak_Keywords[13] = {
     "namespace", // TODO
 };
 
-Token* Oak_Builtin_Functions[3] = {
+Token* Oak_Builtin_Functions[4] = {
     new Token("println", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
     new Token("print", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
     new Token("puts", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
+    new Token("sleep", "runtime.oak", TokenKind::Identifier, create_pos(0,0)),
 };
 
 const std::string Oak_Keyword_Function  = "fn";
@@ -465,9 +466,31 @@ Token* Parser::get_variable_value() {
     this->advance();
 
     if (this->current_token->type == TokenKind::Identifier) {
-        // TODO: variable
-        Error::todo("variable value to new variable ");
-        exit(1);
+        if (is_var_defined(this->current_token->value)) {
+            // Error::todo("variable value to new variable ");
+            // exit(1);
+            auto var_to_ret = is_var_defined_variable(this->current_token->value);
+            auto tk = new Token(
+                var_to_ret->variable_value,
+                this->lexer->filename,
+                var_to_ret->variable_type,
+                create_pos(0,0)
+            );
+            return tk;
+        } else {
+            std::ostringstream ss;
+            ss << "'" << this->current_token->value << "' this variable is not defined";
+            Error::print_error_with_positional_args(
+                SYNTAX_ERROR,
+                ss.str(),
+                create_pos(
+                    this->current_token->pos.row,
+                    this->current_token->pos.col),
+                this->lexer->filename
+            );
+            this->is_error_message = true;
+            exit(1);
+        }
     } else if (
       this->current_token->type == TokenKind::Int    ||
       this->current_token->type == TokenKind::String ||
@@ -505,8 +528,49 @@ void Parser::is_seperator_here() {
     }
 }
 
-void Parser::is_var_defined() {
-  
+bool Parser::is_var_defined(std::string var_name) {
+    auto ac_function = is_function_name_already_declared_node(fn_name->value);
+
+    for (auto& node : ac_function->body) {
+        if (node->type == "VariableDeclarationAST") {
+            if (((VariableDeclarationAST*)node)->variable_name == var_name) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+VariableDeclarationAST* Parser::is_var_defined_variable(std::string var_name) {
+    auto ac_function = is_function_name_already_declared_node(fn_name->value);
+
+    for (auto& node : ac_function->body) {
+        if (node->type == "VariableDeclarationAST") {
+            if (((VariableDeclarationAST*)node)->variable_name == var_name) {
+                return (VariableDeclarationAST*)node;
+            }
+        }
+    }
+
+    return  nullptr;
+}
+
+void Parser::is_var_defined_void(std::string var_name) {
+    if (is_var_defined(var_name)) {
+        std::ostringstream ss;
+        ss << "'" << var_name << "' is already declared";
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            ss.str(),
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
 }
 
 void Parser::parse_let() {
@@ -516,10 +580,12 @@ void Parser::parse_let() {
     is_seperator_here();
     auto _var_value = get_variable_value();
     is_semi_colon_next("variable value");
+    is_var_defined_void(_var_name);
 
     auto var_node = new VariableDeclarationAST(
       _var_name, _var_value->value,
-      _var_value->type, false, find_fn_node());
+      _var_value->type, false,
+      is_function_name_already_declared_node(fn_name->value));
     append_node(var_node);
 }
 

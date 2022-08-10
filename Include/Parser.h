@@ -51,6 +51,8 @@ public:
 
     Token* get_variable_value();
 
+    VariableDeclarationAST* is_var_defined_variable(std::string var_name);
+
     FunctionAST* is_function_name_already_declared_node(std::string name);
 
     NumberNodeAST* number_search();
@@ -73,6 +75,8 @@ public:
 
     bool is_function_name_already_declared_bool(std::string name);
 
+    bool is_var_defined(std::string var_name);
+
     void is_function_name_already_declared(std::string name);
 
     void is_fn_name_correct_call(std::string _fn_name);
@@ -80,6 +84,8 @@ public:
     void is_colon_next(std::string keyword);
 
     void append_node(NodeAST* node);
+
+    void is_var_defined_void(std::string var_name);
 
     void advance();
 

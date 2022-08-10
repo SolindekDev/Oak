@@ -1,0 +1,10 @@
+fn main [
+    push: 1000; # time in miliseconds
+    call: sleep;
+
+    push: "After 1 second!";
+    call: println;
+
+    push: 1000.69696969; # it can be in float as well
+    call: sleep;
+]

@@ -1,4 +1,4 @@
 fn main [
-    push: "Hello, World!";
+    push: "Hi!";
     call: println;
 ]
