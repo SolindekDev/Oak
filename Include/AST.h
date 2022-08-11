@@ -43,13 +43,15 @@ class PushStatementAST : public NodeAST {
 public:
     Token* value_to_stack;
     bool is_push_variable;
+    bool is_var_constant;
     std::string variable_name;
 
     void print();
 
-    PushStatementAST(Token* &_value_to_stack, bool _is_push_variable, std::string _variable_name)
+    PushStatementAST(Token* &_value_to_stack, bool _is_push_variable, bool _is_var_constant, std::string _variable_name)
       : value_to_stack(_value_to_stack)
       , is_push_variable(_is_push_variable)
+      , is_var_constant(_is_var_constant)
       , variable_name(_variable_name) { type = "PushStatementAST"; }
 private:
 };

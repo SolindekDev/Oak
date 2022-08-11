@@ -80,10 +80,16 @@ void Eval::println_implementation() {
 void Eval::push_statement_implementation(PushStatementAST* node, FunctionAST* fn) {
     if (node->is_push_variable == true) {
         for (auto& var : variables) {
-            if (var->name == node->variable_name && var->func->name == fn->name) {
-                std::visit([](const auto &x) {
-                    stack.push_back(x);
-                }, var->value);
+            if (var->name == node->variable_name) {
+                if (var->constant == node->is_var_constant) {
+                    std::visit([](const auto &x) {
+                        stack.push_back(x);
+                    }, var->value);
+                } else if (var->func == fn) {
+                    std::visit([](const auto &x) {
+                        stack.push_back(x);
+                    }, var->value);
+                }
             }
         }
     } else {
@@ -124,15 +130,31 @@ void Eval::variable_declaration_implementation(VariableDeclarationAST* node) {
         node->variable_name,
         node->variable_value,
         node->variable_type,
+        false,
         node->in_function
     );
 
     variables.push_back(variable);
-    std::cout << variable->name << " | ";
-    std::visit([](const auto &x) {
-        std::cout << x;
-    }, variable->value);
-    std::cout << std::endl;
+    // std::cout << variable->name << " | ";
+    // std::visit([](const auto &x) {
+    //     std::cout << x;
+    // }, variable->value);
+}
+
+void Eval::const_declaration_implementation(VariableDeclarationAST* node) {
+    auto variable = new VariableEval(
+        node->variable_name,
+        node->variable_value,
+        node->variable_type,
+        true,
+        node->in_function
+    );
+
+    variables.push_back(variable);
+    // std::cout << variable->name << " | ";
+    // std::visit([](const auto &x) {
+    //     std::cout << x;
+    // }, variable->value);
 }
 
 void Eval::is_stack_empty(std::string fn) {
@@ -160,8 +182,8 @@ void Eval::find_main() {
         if (node->type == "FunctionAST") {
             if (((FunctionAST*)node)->name->value == "main")
                 this->execute_function((FunctionAST*)node);
-        } else
-            Error::todo("eval: node evaluation outside functions ");
+        } else if (node->type == "VariableDeclarationAST")
+            const_declaration_implementation((VariableDeclarationAST*)node);
     }
 }
 

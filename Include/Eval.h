@@ -19,14 +19,16 @@ public:
     std::string name;
     std::variant<int, double, float, std::string> value;
     TokenKind type;
+    bool constant;
     FunctionAST* func;
 
     void print();
 
-    VariableEval(std::string _name, std::variant<int, double, float, std::string> _value, TokenKind _type, FunctionAST* _func)
+    VariableEval(std::string _name, std::variant<int, double, float, std::string> _value, TokenKind _type, bool _constant, FunctionAST* _func)
       : name(_name)
       , value(_value)
       , type(_type)
+      , constant(_constant)
       , func(_func) {}
 private:
 };
@@ -50,6 +52,8 @@ public:
     void call_function_implementation(CallFunctionAST* node);
 
     void variable_declaration_implementation(VariableDeclarationAST* node);
+
+    void const_declaration_implementation(VariableDeclarationAST* node);
 
     void find_main();
 

@@ -279,10 +279,8 @@ void Parser::parse_const() {
 
     auto var_node = new VariableDeclarationAST(
       _var_name, _var_value->value,
-      _var_value->type, true,
-      is_function_name_already_declared_node(fn_name->value));
+      _var_value->type, true, nullptr);
     append_node(var_node);
-    std::cout << _var_name << std::endl;
 }
 
 void Parser::parse_while() {
@@ -550,19 +548,19 @@ bool Parser::is_var_defined(std::string var_name) {
     if (is_fn_open == true) {
         auto ac_function = is_function_name_already_declared_node(fn_name->value);
         for (auto& node : ac_function->body) {
-          if (node->type == "VariableDeclarationAST") {
-            if (((VariableDeclarationAST*)node)->variable_name == var_name) {
-              return true;
+            if (node->type == "VariableDeclarationAST") {
+                if (((VariableDeclarationAST*)node)->variable_name == var_name) {
+                    return true;
+                }
             }
-          }
         }
-    } else {
-        for (auto& outside_node : this->program->body) {
-          if (outside_node->type == "VariableDeclarationAST") {
+    }
+
+    for (auto& outside_node : this->program->body) {
+        if (outside_node->type == "VariableDeclarationAST") {
             if (((VariableDeclarationAST*)outside_node)->variable_name == var_name) {
-              return true;
+                return true;
             }
-          }
         }
     }
 
@@ -580,7 +578,15 @@ VariableDeclarationAST* Parser::is_var_defined_variable(std::string var_name) {
         }
     }
 
-    return  nullptr;
+    for (auto& node : program->body) {
+        if (node->type == "VariableDeclarationAST") {
+            if (((VariableDeclarationAST*)node)->variable_name == var_name) {
+                return (VariableDeclarationAST*)node;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 void Parser::is_var_defined_void(std::string var_name) {
@@ -648,10 +654,11 @@ void Parser::parse_push() {
     is_semi_colon_next("value to push");
 
     if (value_to_stack->type == TokenKind::None) {
-        auto push_node = new PushStatementAST(value_to_stack, true, value_to_stack->value);
+        auto var = is_var_defined_variable(value_to_stack->value);
+        auto push_node = new PushStatementAST(value_to_stack, true, var->is_constant, value_to_stack->value);
         append_node(push_node);
     } else {
-        auto push_node = new PushStatementAST(value_to_stack, false, "");
+        auto push_node = new PushStatementAST(value_to_stack, false, false, "");
         append_node(push_node);
     }
 }
