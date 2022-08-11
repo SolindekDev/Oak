@@ -51,6 +51,8 @@ public:
 
     Token* get_variable_value();
 
+    Token* get_variable_to_pop();
+
     VariableDeclarationAST* is_var_defined_variable(std::string var_name);
 
     FunctionAST* is_function_name_already_declared_node(std::string name);

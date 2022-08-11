@@ -37,6 +37,8 @@ class Eval {
 public:
     ProgramAST* program;
 
+    VariableEval* find_var(std::string name, bool is_constant);
+
     void print_implementation();
 
     void println_implementation();
@@ -50,6 +52,8 @@ public:
     void push_statement_implementation(PushStatementAST* node, FunctionAST* fn);
 
     void call_function_implementation(CallFunctionAST* node);
+
+    void pop_statement_implementation(PopStatementAST* node);
 
     void variable_declaration_implementation(VariableDeclarationAST* node);
 

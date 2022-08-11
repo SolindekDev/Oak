@@ -56,6 +56,17 @@ public:
 private:
 };
 
+class PopStatementAST : public NodeAST {
+public:
+    std::string variable_name;
+
+    void print();
+
+    PopStatementAST(std::string _variable_name)
+      : variable_name(_variable_name) { type = "PopStatementAST"; }
+private:
+};
+
 class CallFunctionAST : public NodeAST {
 public:
     std::string function_name;

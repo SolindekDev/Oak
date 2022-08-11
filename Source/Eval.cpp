@@ -141,6 +141,44 @@ void Eval::variable_declaration_implementation(VariableDeclarationAST* node) {
     // }, variable->value);
 }
 
+VariableEval* Eval::find_var(std::string name, bool is_constant) {
+    for (auto& var : variables) {
+        if (var->name == name && var->constant == is_constant) {
+            return var;
+        }
+    }
+
+    return nullptr;
+}
+
+void Eval::pop_statement_implementation(PopStatementAST* node) {
+    is_stack_empty("pop");
+
+    auto var = find_var(node->variable_name, false);
+    try {
+        var->value = std::get<std::string>(stack.at(stack.size() - 1));
+    } catch (const std::bad_variant_access& ex) {
+        try {
+            var->value = std::get<int>(stack.at(stack.size() - 1));
+        } catch (const std::bad_variant_access& ex) {
+            try {
+                var->value = std::get<double>(stack.at(stack.size() - 1));
+            } catch (const std::bad_variant_access& ex) {
+                try {
+                    var->value = std::get<float>(stack.at(stack.size() - 1));
+                } catch (const std::bad_variant_access& ex) {
+                  Error::print_error(
+                      INTERPRETER_ERROR,
+                      "We shouldn't be here, tell about this error on github issue this might be a very serious interpreter error. Code #003"
+                  );
+                  exit(1);
+                }
+            }
+        }
+    }
+    stack.pop_back();
+}
+
 void Eval::const_declaration_implementation(VariableDeclarationAST* node) {
     auto variable = new VariableEval(
         node->variable_name,
@@ -174,6 +212,13 @@ void Eval::execute_function(FunctionAST* fn) {
             call_function_implementation((CallFunctionAST*)node);
         else if (node->type == "VariableDeclarationAST")
             variable_declaration_implementation((VariableDeclarationAST*)node);
+        else if (node->type == "PopStatementAST")
+            pop_statement_implementation((PopStatementAST*)node);
+        else {
+            std::ostringstream ss;
+            ss << "'" << node->type << "' this type of node in eval ";
+            Error::todo(ss.str());
+        }
     }
 }
 

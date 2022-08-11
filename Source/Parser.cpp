@@ -663,10 +663,72 @@ void Parser::parse_push() {
     }
 }
 
+Token* Parser::get_variable_to_pop() {
+    this->index++;
+    this->advance();
+
+    if (this->current_token->type == TokenKind::Identifier) {
+        if (is_var_defined(this->current_token->value)) {
+            auto var = is_var_defined_variable(this->current_token->value);
+
+            if (var->is_constant) {
+                std::ostringstream ss;
+                ss << "'" << this->current_token->value << "' is a constant expected variable that isn't constant";
+                Error::print_error_with_positional_args(
+                    SYNTAX_ERROR,
+                    ss.str(),
+                    create_pos(
+                        this->current_token->pos.row,
+                        this->current_token->pos.col),
+                    this->lexer->filename
+                );
+                this->is_error_message = true;
+                exit(1);
+            } else {
+                auto tk = new Token(
+                    var->variable_name,
+                    this->lexer->filename,
+                    var->variable_type,
+                    create_pos(0,0)
+                );
+                return tk;
+            }
+        } else {
+            std::ostringstream ss;
+            ss << "'" << this->current_token->value << "' it's not declared";
+            Error::print_error_with_positional_args(
+                SYNTAX_ERROR,
+                ss.str(),
+                create_pos(
+                    this->current_token->pos.row,
+                    this->current_token->pos.col),
+                this->lexer->filename
+            );
+            this->is_error_message = true;
+            exit(1);
+        }
+    } else {
+        Error::print_error_with_positional_args(
+            SYNTAX_ERROR,
+            "expected variable name to pop",
+            create_pos(
+                this->current_token->pos.row,
+                this->current_token->pos.col),
+            this->lexer->filename
+        );
+        this->is_error_message = true;
+        exit(1);
+    }
+}
+
 void Parser::parse_pop() {
     is_token_in_function();
     is_colon_next("pop");
-    Error::todo("pop keyword ");
+    auto _get_var_to_pop = get_variable_to_pop();
+    is_semi_colon_next("variable to pop");
+
+    auto pop_node = new PopStatementAST(_get_var_to_pop->value);
+    append_node(pop_node);
 }
 
 void Parser::parse_keyword() {
@@ -698,8 +760,8 @@ void Parser::parse_keyword() {
             this->parse_class();
         else {
             Error::print_error_with_positional_args(
-                COMPILER_ERROR,
-                "We shouldn't be here, tell about this error on github issue this might be a very serious compiler error. Code #002",
+                INTERPRETER_ERROR,
+                "We shouldn't be here, tell about this error on github issue this might be a very serious interpreter error. Code #002",
                 create_pos(
                     this->current_token->pos.row,
                     this->current_token->pos.col

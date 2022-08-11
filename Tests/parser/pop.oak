@@ -1,0 +1,13 @@
+fn sleep_one_second [
+    push: 1000;
+    call: sleep;
+]
+
+fn main [
+    let: HOW_MUCH_IS_ONE_SECOND_IN_MS | 0;
+
+    call: sleep_one_second;
+    pop: HOW_MUCH_IS_ONE_SECOND_IN_MS; # now HOW_MUCH_IS_ONE_SECOND_IN_MS is equals to 1000 if we wan't to we can print it
+    push: HOW_MUCH_IS_ONE_SECOND_IN_MS;
+    call: println; # but we can call println after `call: sleep_one_second`
+]

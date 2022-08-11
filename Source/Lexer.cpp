@@ -235,7 +235,7 @@ void Lexer::number_creator(std::vector<Token> &tokens, Token last_token) {
           this->create_binary();
           break;
         default:
-          Error::print_error_with_positional_args(COMPILER_ERROR, "We shouldn't be here, tell about this error on github issue this might be a very serious compiler error. Code #001", create_pos(this->curr_row, this->curr_col), this->filename);
+          Error::print_error_with_positional_args(INTERPRETER_ERROR, "We shouldn't be here, tell about this error on github issue this might be a very serious interpreter error. Code #001", create_pos(this->curr_row, this->curr_col), this->filename);
           break;
       }
       return;
