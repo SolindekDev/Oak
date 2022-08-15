@@ -9,7 +9,7 @@ Oak programming language is a simple, fast, interpreter programming language for
 ## Goals
 - Lexer
 - Parser
-- Codegen
+- Evaluator
 - Add runtime libraries
 ## Screenshots
 ### First Hello, World ever writted in Oak
